@@ -7,14 +7,14 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp" />
-            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp/app" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp/app" />
           </set>
         </option>
         <option name="myModules">
           <set>
-            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp" />
-            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp/app" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp/app" />
           </set>
         </option>
       </GradleProjectSettings>

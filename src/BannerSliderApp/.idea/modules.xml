@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp/BannerSliderApp.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp/BannerSliderApp.iml" />
-      <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp/app/app.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Code/BannerSliderApp/app/app.iml" />
+      <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp/BannerSliderApp.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp/BannerSliderApp.iml" />
+      <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp/app/app.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/BannerSliderApp/app/app.iml" />
     </modules>
   </component>
 </project>
