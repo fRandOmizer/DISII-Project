@@ -6,14 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.text.Layout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 
 /**
  * TODO: document your custom view class.
  */
-public class BannerSliderView extends View {
+public class BannerSliderView extends LinearLayout {
     private String mExampleString; // TODO: use a default from R.string...
     private int mExampleColor = Color.RED; // TODO: use a default from R.color...
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
@@ -25,6 +28,8 @@ public class BannerSliderView extends View {
 
     public BannerSliderView(Context context) {
         super(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.banner_slider_view, this);
         init(null, 0);
     }
 
