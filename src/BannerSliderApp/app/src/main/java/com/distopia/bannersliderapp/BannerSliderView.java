@@ -6,9 +6,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.Layout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,10 +24,26 @@ import android.widget.LinearLayout;
  * TODO: document your custom view class.
  */
 public class BannerSliderView extends LinearLayout {
-    private String mExampleString; // TODO: use a default from R.string...
+
+    /**
+     * The number of pages (wizard steps) to show in this demo.
+     */
+    private static final int NUM_PAGES = 5;
+
+    /**
+     * The pager widget, which handles animation and allows swiping horizontally to access previous
+     * and next wizard steps.
+     */
+    private ViewPager mPager;
+
+    /**
+     * The pager adapter, which provides the pages to the view pager widget.
+     */
+    private PagerAdapter mPagerAdapter;
+
+    private String mExampleString = "Bla"; // TODO: use a default from R.string...
     private int mExampleColor = Color.RED; // TODO: use a default from R.color...
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
-    private Drawable mExampleDrawable;
 
     private TextPaint mTextPaint;
     private float mTextWidth;
@@ -30,16 +53,47 @@ public class BannerSliderView extends LinearLayout {
         super(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.banner_slider_view, this);
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (BannerSliderViewPager) findViewById(R.id.pager);
+        try {
+            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+            mPagerAdapter = new BannerSliderPagerAdapter(fragmentManager);
+        } catch (ClassCastException e) {
+            Log.e("BannerSliderView", "Can't get fragment manager");
+        }
+        mPager.setAdapter(mPagerAdapter);
         init(null, 0);
     }
 
     public BannerSliderView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.banner_slider_view, this);
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (BannerSliderViewPager) findViewById(R.id.pager);
+        try {
+            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+            mPagerAdapter = new BannerSliderPagerAdapter(fragmentManager);
+        } catch (ClassCastException e) {
+            Log.e("BannerSliderView", "Can't get fragment manager");
+        }
+        mPager.setAdapter(mPagerAdapter);
         init(attrs, 0);
     }
 
     public BannerSliderView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.banner_slider_view, this);
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (BannerSliderViewPager) findViewById(R.id.pager);
+        try {
+            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+            mPagerAdapter = new BannerSliderPagerAdapter(fragmentManager);
+        } catch (ClassCastException e) {
+            Log.e("BannerSliderView", "Can't get fragment manager");
+        }
+        mPager.setAdapter(mPagerAdapter);
         init(attrs, defStyle);
     }
 
@@ -58,12 +112,6 @@ public class BannerSliderView extends LinearLayout {
         mExampleDimension = a.getDimension(
                 R.styleable.BannerSliderView_exampleDimension,
                 mExampleDimension);
-
-        if (a.hasValue(R.styleable.BannerSliderView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.BannerSliderView_exampleDrawable);
-            mExampleDrawable.setCallback(this);
-        }
 
         a.recycle();
 
@@ -87,7 +135,7 @@ public class BannerSliderView extends LinearLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        /**super.onDraw(canvas);
 
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
@@ -103,14 +151,7 @@ public class BannerSliderView extends LinearLayout {
         canvas.drawText(mExampleString,
                 paddingLeft + (contentWidth - mTextWidth) / 2,
                 paddingTop + (contentHeight + mTextHeight) / 2,
-                mTextPaint);
-
-        // Draw the example drawable on top of the text.
-        if (mExampleDrawable != null) {
-            mExampleDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + contentWidth, paddingTop + contentHeight);
-            mExampleDrawable.draw(canvas);
-        }
+                mTextPaint);**/
     }
 
     /**
@@ -174,21 +215,27 @@ public class BannerSliderView extends LinearLayout {
     }
 
     /**
-     * Gets the example drawable attribute value.
-     *
-     * @return The example drawable attribute value.
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
      */
-    public Drawable getExampleDrawable() {
-        return mExampleDrawable;
-    }
+    private class BannerSliderPagerAdapter extends FragmentStatePagerAdapter {
+        public BannerSliderPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-    /**
-     * Sets the view's example drawable attribute value. In the example view, this drawable is
-     * drawn above the text.
-     *
-     * @param exampleDrawable The example drawable attribute value to use.
-     */
-    public void setExampleDrawable(Drawable exampleDrawable) {
-        mExampleDrawable = exampleDrawable;
+        @Override
+        public Fragment getItem(int position) {
+            return new BannerSliderPageFragment();
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
+
+        @Override
+        public float getPageWidth(int position) {
+            return 0.6f;
+        }
     }
 }

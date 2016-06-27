@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/btn_minus"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:text="-" />
+    <com.distopia.bannersliderapp.BannerSliderViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/pager"/>
 
-    <EditText
-        android:id="@+id/edit_text"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:gravity="center"
-        android:focusable="false"
-        android:text="0" />
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
-    <Button
-        android:id="@+id/btn_plus"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:text="+" />
-</LinearLayout>
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_weight=".4"
+            android:layout_width="match_parent"
+            android:background="#00000000"/>
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_weight=".2"
+            android:layout_width="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:id="@+id/image"
+                android:src="@drawable/tv_transparent_s" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_weight=".4"
+            android:layout_width="match_parent"
+            android:background="#00000000"/>
+
+    </LinearLayout>
+
+</FrameLayout>
