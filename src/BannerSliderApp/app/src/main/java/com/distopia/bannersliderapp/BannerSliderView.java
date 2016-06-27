@@ -62,6 +62,9 @@ public class BannerSliderView extends LinearLayout {
             Log.e("BannerSliderView", "Can't get fragment manager");
         }
         mPager.setAdapter(mPagerAdapter);
+        mPager.setClipToPadding(false);
+        mPager.setPageMargin(-300);
+        mPager.setOffscreenPageLimit(2);
         init(null, 0);
     }
 
@@ -78,6 +81,9 @@ public class BannerSliderView extends LinearLayout {
             Log.e("BannerSliderView", "Can't get fragment manager");
         }
         mPager.setAdapter(mPagerAdapter);
+        mPager.setClipToPadding(false);
+        mPager.setPageMargin(-300);
+        mPager.setOffscreenPageLimit(2);
         init(attrs, 0);
     }
 
@@ -94,6 +100,9 @@ public class BannerSliderView extends LinearLayout {
             Log.e("BannerSliderView", "Can't get fragment manager");
         }
         mPager.setAdapter(mPagerAdapter);
+        mPager.setClipToPadding(false);
+        mPager.setPageMargin(-300);
+        mPager.setOffscreenPageLimit(2);
         init(attrs, defStyle);
     }
 
@@ -235,7 +244,7 @@ public class BannerSliderView extends LinearLayout {
 
         @Override
         public float getPageWidth(int position) {
-            return 0.6f;
+            return 0.8f;
         }
     }
 }

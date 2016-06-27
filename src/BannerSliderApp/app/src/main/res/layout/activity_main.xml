@@ -9,10 +9,12 @@
     tools:context="com.distopia.bannersliderapp.MainActivity">
 
     <com.distopia.bannersliderapp.BannerSliderView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:exampleColor="#33b5e5"
         app:exampleDimension="24sp"
-        app:exampleString="Hello, BannerSliderView" />
+        app:exampleString="Hello, BannerSliderView"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
