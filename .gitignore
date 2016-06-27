@@ -28,4 +28,4 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 *.class
-/src/BannerSliderApp/.idea
+src/BannerSliderApp/.idea
