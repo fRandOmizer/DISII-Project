@@ -2,22 +2,15 @@ package com.distopia.bannersliderapp;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Layout;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
@@ -43,6 +36,7 @@ public class BannerSliderView extends LinearLayout {
     private PagerAdapter mPagerAdapter;
 
     private float mBottomOffset = 0.0f;
+    private int[] mPictures;
 
     public BannerSliderView(Context context) {
         super(context);
@@ -69,14 +63,13 @@ public class BannerSliderView extends LinearLayout {
         try {
             FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
             mPagerAdapter = new BannerSliderPagerAdapter(fragmentManager);
+            mPager.setAdapter(mPagerAdapter);
+            mPager.setClipToPadding(false);
+            mPager.setOffscreenPageLimit(2);
+            mPager.setCurrentItem(1);
         } catch (ClassCastException e) {
             Log.e("BannerSliderView", "Can't get fragment manager");
         }
-
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setClipToPadding(false);
-        mPager.setOffscreenPageLimit(2);
-        mPager.setCurrentItem(1);
 
         if(attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -114,6 +107,14 @@ public class BannerSliderView extends LinearLayout {
         return mBottomOffset;
     }
 
+    public void setPictures(int[] pictures) {
+        mPictures = pictures;
+    }
+
+    public int[] getPictures() {
+        return mPictures;
+    }
+
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
@@ -125,7 +126,8 @@ public class BannerSliderView extends LinearLayout {
 
         @Override
         public Fragment getItem(int position) {
-            return new BannerSliderPageFragment();
+            BannerSliderPageFragment bsf = new BannerSliderPageFragment();
+            return bsf;
         }
 
         @Override
