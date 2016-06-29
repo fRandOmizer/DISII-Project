@@ -2,6 +2,7 @@ package com.distopia.absoluteregulatortestapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import com.distopia.absoluteregulatortestapp.AbsoluteRegulatorView;
 
 public class MainActivity extends AppCompatActivity {
 
