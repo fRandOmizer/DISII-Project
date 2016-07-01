@@ -8,17 +8,36 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 /**
  * TODO: document your custom view class.
+ * TODO: add touch events
+ * TODO: draw current and target values
+ * TODO: add vibration feedback
+ * TODO: add view attributes
+ * TODO: delete default stuff
  */
-public class AbsoluteRegulatorView extends View {
+public class AbsoluteRegulatorView extends RelativeLayout {
+    // default stuff
     private Drawable mExampleDrawable;
 
     private TextPaint mTextPaint;
     private float mTextWidth;
     private float mTextHeight;
+
+    // regulator specific attributes
+
+    // image views which are displayed next to each other
+    private ImageView imageMin;
+    private ImageView imageMax;
+
+    // regulator values
+    private float minValue = 0;
+    private float maxValue = 100;
+    private float currentValue = 25;
+    private float targetValue = 50;
 
     public AbsoluteRegulatorView(Context context) {
         super(context);
@@ -40,17 +59,6 @@ public class AbsoluteRegulatorView extends View {
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.AbsoluteRegulatorView, defStyle, 0);
 
-        /*mExampleString = a.getString(
-                R.styleable.AbsoluteRegulatorView_exampleString);
-        mExampleColor = a.getColor(
-                R.styleable.AbsoluteRegulatorView_exampleColor,
-                mExampleColor);
-        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-        // values that should fall on pixel boundaries.
-        mExampleDimension = a.getDimension(
-                R.styleable.AbsoluteRegulatorView_exampleDimension,
-                mExampleDimension);*/
-
         if (a.hasValue(R.styleable.AbsoluteRegulatorView_exampleDrawable)) {
             mExampleDrawable = a.getDrawable(
                     R.styleable.AbsoluteRegulatorView_exampleDrawable);
@@ -63,6 +71,14 @@ public class AbsoluteRegulatorView extends View {
         mTextPaint = new TextPaint();
         mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
+
+        // add images
+        inflate(getContext(), R.layout.absolute_regulator, this);
+        imageMin = (ImageView) findViewById(R.id.imageMin);
+        imageMin.setImageResource(R.drawable.thermometer_min);
+
+        imageMax = (ImageView) findViewById(R.id.imageMax);
+        imageMax.setImageResource(R.drawable.thermometer_max);
 
         // Update TextPaint and text measurements from attributes
         invalidateTextPaintAndMeasurements();
@@ -103,6 +119,11 @@ public class AbsoluteRegulatorView extends View {
                     paddingLeft + contentWidth, paddingTop + contentHeight);
             mExampleDrawable.draw(canvas);
         }
+
+        // draw lines
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()*currentValue, canvas.getWidth(), canvas.getHeight()*currentValue, paint);
     }
 
     /**
@@ -122,5 +143,55 @@ public class AbsoluteRegulatorView extends View {
      */
     public void setExampleDrawable(Drawable exampleDrawable) {
         mExampleDrawable = exampleDrawable;
+    }
+
+    // getter and setter
+    public float getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(float minValue) {
+        this.minValue = minValue;
+        invalidate();
+        requestLayout();
+    }
+
+    public float getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(float maxValue) {
+        this.maxValue = maxValue;
+        invalidate();
+        requestLayout();
+    }
+
+    public float getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(float currentValue) {
+        if (currentValue < minValue) {
+            this.currentValue = minValue;
+        } else if (currentValue > maxValue) {
+            this.currentValue = maxValue;
+        } else {
+            this.currentValue = currentValue;
+        }
+        invalidate();
+    }
+
+    public float getTargetValue() {
+        return targetValue;
+    }
+
+    public void setTargetValue(float targetValue) {
+        if (targetValue < minValue) {
+            this.targetValue = minValue;
+        } else if (targetValue > maxValue) {
+            this.targetValue = maxValue;
+        } else {
+            this.targetValue = targetValue;
+        }
     }
 }
