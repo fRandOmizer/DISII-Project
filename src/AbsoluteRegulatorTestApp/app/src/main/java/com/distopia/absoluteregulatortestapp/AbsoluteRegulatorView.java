@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
  * TODO: add vibration feedback
  * TODO: add view attributes
  * TODO: delete default stuff
+ * TODO: fix drawing
  */
 public class AbsoluteRegulatorView extends RelativeLayout {
     // default stuff
@@ -26,6 +27,10 @@ public class AbsoluteRegulatorView extends RelativeLayout {
     private TextPaint mTextPaint;
     private float mTextWidth;
     private float mTextHeight;
+
+    // paint objects
+    private Paint currentPaint;
+    private Paint targetPaint;
 
     // regulator specific attributes
 
@@ -72,13 +77,22 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
 
+        // paint objects for value indicator lines
+        targetPaint = new Paint();
+        targetPaint.setColor(Color.RED);
+        targetPaint.setStrokeWidth(5);
+
+        currentPaint = new Paint();
+        currentPaint.setColor(Color.BLUE);
+        currentPaint.setStrokeWidth(5);
+
         // add images
         inflate(getContext(), R.layout.absolute_regulator, this);
-        imageMin = (ImageView) findViewById(R.id.imageMin);
+        /*imageMin = (ImageView) findViewById(R.id.imageMin);
         imageMin.setImageResource(R.drawable.thermometer_min);
 
         imageMax = (ImageView) findViewById(R.id.imageMax);
-        imageMax.setImageResource(R.drawable.thermometer_max);
+        imageMax.setImageResource(R.drawable.thermometer_max);*/
 
         // Update TextPaint and text measurements from attributes
         invalidateTextPaintAndMeasurements();
@@ -121,9 +135,9 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         }
 
         // draw lines
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()*currentValue, canvas.getWidth(), canvas.getHeight()*currentValue, paint);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()*currentValue, canvas.getWidth(), canvas.getHeight()*currentValue, currentPaint);
+        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()*targetValue, canvas.getWidth(), canvas.getHeight()*targetValue, targetPaint);
+
     }
 
     /**
