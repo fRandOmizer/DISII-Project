@@ -8,8 +8,10 @@
     <com.distopia.bannersliderapp.BannerSliderView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:bottomOffset="0.15"
+        app:offsetBottom="0.15"
+        app:offsetTop="0.0"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:id="@+id/bannerslider" />
 
 </RelativeLayout>

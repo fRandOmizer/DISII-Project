@@ -1,5 +1,7 @@
 <resources>
     <declare-styleable name="BannerSliderView">
-        <attr name="bottomOffset" format="float" />
+        <attr name="offsetBottom" format="float" />
+        <attr name="offsetTop" format="float" />
+        <attr name="main_image" format="reference" />
     </declare-styleable>
 </resources>

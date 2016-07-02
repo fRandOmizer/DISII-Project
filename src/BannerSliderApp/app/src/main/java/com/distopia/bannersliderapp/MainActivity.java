@@ -10,10 +10,16 @@ import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int[] mChannels = {R.drawable.das_erste_s, R.drawable.zdf_s, R.drawable.rtl_s};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        BannerSliderView slider = (BannerSliderView) findViewById(R.id.bannerslider);
+        if(slider != null) {
+            slider.setImages(mChannels);
+        }
     }
 
 }
