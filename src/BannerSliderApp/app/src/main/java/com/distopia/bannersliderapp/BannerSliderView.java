@@ -146,7 +146,7 @@ public class BannerSliderView extends LinearLayout {
                     public void onGlobalLayout() {
                         mPager.setPadding(
                                 findViewById(R.id.marginleft).getWidth(),
-                                0,
+                                (int) (mOffsetTop * findViewById(R.id.image).getHeight()),
                                 findViewById(R.id.marginleft).getWidth(),
                                 (int) (mOffsetBottom * findViewById(R.id.image).getHeight())
                         );
@@ -159,7 +159,7 @@ public class BannerSliderView extends LinearLayout {
                     public void onGlobalLayout() {
                         mPager.setPadding(
                                 findViewById(R.id.marginleft).getWidth(),
-                                0,
+                                (int) (mOffsetTop * findViewById(R.id.image).getHeight()),
                                 findViewById(R.id.marginleft).getWidth(),
                                 (int) (mOffsetBottom * findViewById(R.id.image).getHeight())
                         );
