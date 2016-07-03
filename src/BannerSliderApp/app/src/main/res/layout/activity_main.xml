@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         app:offsetBottom="0.15"
         app:offsetTop="0.0"
+        app:main_image="@drawable/tv_transparent_s"
+        app:paddingToImage="0.3"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/bannerslider" />

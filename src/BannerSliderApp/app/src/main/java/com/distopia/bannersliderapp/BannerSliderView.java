@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,10 +37,11 @@ public class BannerSliderView extends LinearLayout {
      */
     private PagerAdapter mPagerAdapter;
 
-    private float mOffsetBottom = 0.0f;
-    private float mOffsetTop = 0.0f;
-    private int mImage = R.drawable.tv_transparent_s;
-    private int[] mImages = {};
+    private float mOffsetBottom   = 0.15f;
+    private float mOffsetTop      = 0.0f;
+    private float mPaddingToImage = 0.2f;
+    private int mImage            = R.drawable.tv_transparent_s;
+    private int[] mImages         = {R.drawable.default_image};
 
     public BannerSliderView(Context context) {
         super(context);
@@ -79,9 +81,11 @@ public class BannerSliderView extends LinearLayout {
                     R.styleable.BannerSliderView,
                     0, 0);
             try {
-                mOffsetBottom = a.getFloat(R.styleable.BannerSliderView_offsetBottom, 0.15f);
-                mOffsetTop = a.getFloat(R.styleable.BannerSliderView_offsetTop, 0.0f);
-                mImage = a.getResourceId(R.styleable.BannerSliderView_main_image, R.drawable.tv_transparent_s);
+                mOffsetBottom   = a.getFloat(R.styleable.BannerSliderView_offsetBottom, 0.15f);
+                mOffsetTop      = a.getFloat(R.styleable.BannerSliderView_offsetTop, 0.0f);
+                mPaddingToImage = a.getFloat(R.styleable.BannerSliderView_paddingToImage, 0.2f);
+                mImage          = a.getResourceId(R.styleable.BannerSliderView_main_image,
+                                                  R.drawable.tv_transparent_s);
             } finally {
                 a.recycle();
             }
@@ -151,7 +155,8 @@ public class BannerSliderView extends LinearLayout {
                                 (int) (mOffsetBottom * findViewById(R.id.image).getHeight())
                         );
                     }
-        });
+                }
+        );
 
         findViewById(R.id.image).getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -164,7 +169,19 @@ public class BannerSliderView extends LinearLayout {
                                 (int) (mOffsetBottom * findViewById(R.id.image).getHeight())
                         );
                     }
-        });
+                }
+        );
+
+                        View left = findViewById(R.id.marginleft);
+                        left.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                                                           LayoutParams.MATCH_PARENT,
+                                                                           mPaddingToImage));
+
+                        View right = findViewById(R.id.marginright);
+                        right.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                                                            LayoutParams.MATCH_PARENT,
+                                                                            mPaddingToImage));
+
     }
 
     /**
