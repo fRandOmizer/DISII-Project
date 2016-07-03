@@ -185,13 +185,7 @@ public class AbsoluteRegulatorView extends RelativeLayout {
     }
 
     public void setCurrentValue(float currentValue) {
-        if (currentValue < minValue) {
-            this.currentValue = minValue;
-        } else if (currentValue > maxValue) {
-            this.currentValue = maxValue;
-        } else {
-            this.currentValue = currentValue;
-        }
+        this.currentValue = currentValue;
         invalidate();
     }
 
