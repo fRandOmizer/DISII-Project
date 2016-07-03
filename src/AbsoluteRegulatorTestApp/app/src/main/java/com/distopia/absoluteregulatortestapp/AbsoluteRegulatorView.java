@@ -207,5 +207,17 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         } else {
             this.targetValue = targetValue;
         }
+        invalidate();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        // get vertical pos
+        float y = e.getY();
+        // linear transform to target value
+        float value = (y - 0) / (getHeight() - 0) * (maxValue - minValue) + minValue;
+        // set slider value
+        this.setTargetValue(value);
+        return true;
     }
 }
