@@ -9,10 +9,12 @@
         android:background="#ccc"
         android:paddingBottom="40dp"
         android:paddingLeft="20dp"
-        app:exampleColor="#33b5e5"
-        app:exampleDimension="24sp"
-        app:exampleDrawable="@android:drawable/ic_menu_add"
-        app:exampleString="Hello, AbsoluteRegulatorView"
+        app:minValue="0"
+        app:maxValue="100"
+        app:currentValueColor="#0000ff"
+        app:targetValueColor="#ff0000"
+        app:minImage="@drawable/thermometer_min"
+        app:maxImage="@drawable/thermometer_max"
         android:id="@+id/myView"
         android:layout_gravity="center" />
 

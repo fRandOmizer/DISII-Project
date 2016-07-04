@@ -22,8 +22,6 @@ import android.view.View;
  * TODO: document your custom view class.
  * TODO: draw current and target values (improve)
  * TODO: add vibration feedback
- * TODO: add view attributes
- * TODO: delete default stuff
  */
 public class AbsoluteRegulatorView extends View {
     // default stuff
@@ -42,9 +40,15 @@ public class AbsoluteRegulatorView extends View {
     // regulator specific attributes
 
     // image views which are displayed next to each other
+    private int minImgId;
+    private int maxImgId;
+
     private BitmapDrawable imageMin;
     private BitmapDrawable imageMax;
     private LayerDrawable layer;
+
+    private int currentValueColor;
+    private int targetValueColor;
 
     // regulator values
     private float minValue = 0;
@@ -72,12 +76,24 @@ public class AbsoluteRegulatorView extends View {
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.AbsoluteRegulatorView, defStyle, 0);
 
-        // TODO: remove
-        /*if (a.hasValue(R.styleable.AbsoluteRegulatorView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.AbsoluteRegulatorView_exampleDrawable);
-            mExampleDrawable.setCallback(this);
-        }*/
+        if (a.hasValue((R.styleable.AbsoluteRegulatorView_minValue))) {
+            setMinValue(a.getFloat(R.styleable.AbsoluteRegulatorView_minValue, 0));
+        }
+        if (a.hasValue((R.styleable.AbsoluteRegulatorView_maxValue))) {
+            setMaxValue(a.getFloat(R.styleable.AbsoluteRegulatorView_maxValue, 100));
+        }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_minImage)) {
+            minImgId = a.getResourceId(R.styleable.AbsoluteRegulatorView_minImage, 0);
+        }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_maxImage)) {
+            maxImgId = a.getResourceId(R.styleable.AbsoluteRegulatorView_maxImage, 0);
+        }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_currentValueColor)) {
+            currentValueColor = a.getColor(R.styleable.AbsoluteRegulatorView_currentValueColor, 0);
+        }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_targetValueColor)) {
+            targetValueColor = a.getColor(R.styleable.AbsoluteRegulatorView_targetValueColor, 0);
+        }
 
         a.recycle();
 
@@ -88,11 +104,11 @@ public class AbsoluteRegulatorView extends View {
 
         // paint objects for value indicator lines
         targetPaint = new Paint();
-        targetPaint.setColor(Color.RED);
+        targetPaint.setColor(targetValueColor);
         targetPaint.setStrokeWidth(50);
 
         currentPaint = new Paint();
-        currentPaint.setColor(Color.BLUE);
+        currentPaint.setColor(currentValueColor);
         currentPaint.setStrokeWidth(50);
 
         // add images
@@ -126,26 +142,26 @@ public class AbsoluteRegulatorView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if ((width != getWidth()) && (height != getHeight()) ) {
+        if ((width != getWidth()) && (height != getHeight())) {
             width = getWidth();
             height = getHeight();
             resizeImages(width, height);
         }
 
         // draw images
-        Rect bounds = new Rect(0,0,width,height);
+        Rect bounds = new Rect(0, 0, width, height);
         layer.setBounds(bounds);
         imageMin.setBounds(bounds);
-        bounds.set(0, Math.round(height*currentValue/maxValue), width, height);
+        bounds.set(0, Math.round(height * normalizeValue(currentValue)), width, height);
         imageMax.setBounds(bounds);
         layer.getDrawable(1).setBounds(bounds);
         layer.draw(canvas);
 
         // draw lines
-        canvas.drawLine(width/2,height*currentValue/maxValue,width,height*currentValue/maxValue,currentPaint);
-        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height*currentValue/maxValue-mTextHeight, mTextPaint);
-        canvas.drawLine(width/2,height*targetValue/maxValue,width,height*targetValue/maxValue,targetPaint);
-        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height*targetValue/maxValue-mTextHeight, mTextPaint);
+        canvas.drawLine(width / 2, height * normalizeValue(currentValue), width, height * normalizeValue(currentValue), currentPaint);
+        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height * normalizeValue(currentValue) - mTextHeight, mTextPaint);
+        canvas.drawLine(width / 2, height * normalizeValue(targetValue), width, height *normalizeValue(targetValue), targetPaint);
+        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height * normalizeValue(targetValue) - mTextHeight, mTextPaint);
     }
 
     // getter and setter
@@ -199,7 +215,7 @@ public class AbsoluteRegulatorView extends View {
         // get vertical pos
         float y = e.getY();
         // linear transform to target value
-        float value = (y) / (getHeight()) * (maxValue - minValue) + minValue;
+        float value = mapToRange(y, 0, height, minValue, maxValue);
         // set slider value
         this.setTargetValue(value);
         return true;
@@ -212,14 +228,21 @@ public class AbsoluteRegulatorView extends View {
         resizeImages(w, h);
     }
 
-    private void resizeImages(int w, int h)
-    {
+    private void resizeImages(int w, int h) {
         // create new images
-        Bitmap bmMin = BitmapFactory.decodeResource(getResources(), R.drawable.thermometer_min);
-        Bitmap bmMax = BitmapFactory.decodeResource(getResources(), R.drawable.thermometer_max);
+        Bitmap bmMin = BitmapFactory.decodeResource(getResources(), minImgId);
+        Bitmap bmMax = BitmapFactory.decodeResource(getResources(), maxImgId);
         imageMin = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMin, w, h, false));
         imageMin.setGravity(Gravity.BOTTOM);
         imageMax = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMax, w, h, false));
         imageMax.setGravity(Gravity.BOTTOM);
+    }
+
+    private float normalizeValue(float value) {
+        return mapToRange(value, getMinValue(), getMaxValue(), 0, 1);
+    }
+
+    private float mapToRange(float value, float inMin, float inMax, float outMin, float outMax) {
+        return outMin + ((outMax - outMin) / (inMax - inMin)) * (value - inMin);
     }
 }

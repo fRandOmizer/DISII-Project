@@ -1,8 +1,10 @@
 <resources>
     <declare-styleable name="AbsoluteRegulatorView">
-        <attr name="exampleString" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
+        <attr name="minValue" format="float" />
+        <attr name="maxValue" format="float" />
+        <attr name="currentValueColor" format="color" />
+        <attr name="targetValueColor" format="color" />
+        <attr name="minImage" format="reference" />
+        <attr name="maxImage" format="reference" />
     </declare-styleable>
 </resources>
