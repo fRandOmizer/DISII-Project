@@ -2,31 +2,38 @@ package com.distopia.absoluteregulatortestapp;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * TODO: document your custom view class.
- * TODO: add touch events
- * TODO: draw current and target values
+ * TODO: draw current and target values (improve)
  * TODO: add vibration feedback
  * TODO: add view attributes
  * TODO: delete default stuff
- * TODO: fix drawing
  */
-public class AbsoluteRegulatorView extends RelativeLayout {
+public class AbsoluteRegulatorView extends View {
     // default stuff
-    private Drawable mExampleDrawable;
-
     private TextPaint mTextPaint;
     private float mTextWidth;
     private float mTextHeight;
+
+    // dimensions
+    private int width;
+    private int height;
 
     // paint objects
     private Paint currentPaint;
@@ -35,8 +42,9 @@ public class AbsoluteRegulatorView extends RelativeLayout {
     // regulator specific attributes
 
     // image views which are displayed next to each other
-    private ImageView imageMin;
-    private ImageView imageMax;
+    private BitmapDrawable imageMin;
+    private BitmapDrawable imageMax;
+    private LayerDrawable layer;
 
     // regulator values
     private float minValue = 0;
@@ -64,11 +72,12 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.AbsoluteRegulatorView, defStyle, 0);
 
-        if (a.hasValue(R.styleable.AbsoluteRegulatorView_exampleDrawable)) {
+        // TODO: remove
+        /*if (a.hasValue(R.styleable.AbsoluteRegulatorView_exampleDrawable)) {
             mExampleDrawable = a.getDrawable(
                     R.styleable.AbsoluteRegulatorView_exampleDrawable);
             mExampleDrawable.setCallback(this);
-        }
+        }*/
 
         a.recycle();
 
@@ -80,28 +89,34 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         // paint objects for value indicator lines
         targetPaint = new Paint();
         targetPaint.setColor(Color.RED);
-        targetPaint.setStrokeWidth(5);
+        targetPaint.setStrokeWidth(50);
 
         currentPaint = new Paint();
         currentPaint.setColor(Color.BLUE);
-        currentPaint.setStrokeWidth(5);
+        currentPaint.setStrokeWidth(50);
 
         // add images
-        inflate(getContext(), R.layout.absolute_regulator, this);
-        /*imageMin = (ImageView) findViewById(R.id.imageMin);
-        imageMin.setImageResource(R.drawable.thermometer_min);
+        width = 900;
+        height = 1400;
+        resizeImages(width, height);
 
-        imageMax = (ImageView) findViewById(R.id.imageMax);
-        imageMax.setImageResource(R.drawable.thermometer_max);*/
+        ClipDrawable clippy = new ClipDrawable(imageMax, Gravity.BOTTOM, 2);
+        clippy.setVisible(true, true);
+        clippy.setLevel(10000);
+
+        Drawable[] array = new Drawable[2];
+        array[0] = imageMin;
+        array[1] = clippy;
+        layer = new LayerDrawable(array);
 
         // Update TextPaint and text measurements from attributes
         invalidateTextPaintAndMeasurements();
     }
 
     private void invalidateTextPaintAndMeasurements() {
-        mTextPaint.setTextSize(12);
+        mTextPaint.setTextSize(75);
         mTextPaint.setColor(Color.BLACK);
-        mTextWidth = mTextPaint.measureText("Absolute Regulator");
+        mTextWidth = mTextPaint.measureText("99");
 
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
         mTextHeight = fontMetrics.bottom;
@@ -111,52 +126,26 @@ public class AbsoluteRegulatorView extends RelativeLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
-        int contentWidth = getWidth() - paddingLeft - paddingRight;
-        int contentHeight = getHeight() - paddingTop - paddingBottom;
-
-        // Draw the text.
-        canvas.drawText("Absolute Regulator",
-                paddingLeft + (contentWidth - mTextWidth) / 2,
-                paddingTop + (contentHeight + mTextHeight) / 2,
-                mTextPaint);
-
-        // Draw the example drawable on top of the text.
-        if (mExampleDrawable != null) {
-            mExampleDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + contentWidth, paddingTop + contentHeight);
-            mExampleDrawable.draw(canvas);
+        if ((width != getWidth()) && (height != getHeight()) ) {
+            width = getWidth();
+            height = getHeight();
+            resizeImages(width, height);
         }
 
+        // draw images
+        Rect bounds = new Rect(0,0,width,height);
+        layer.setBounds(bounds);
+        imageMin.setBounds(bounds);
+        bounds.set(0, Math.round(height*currentValue/maxValue), width, height);
+        imageMax.setBounds(bounds);
+        layer.getDrawable(1).setBounds(bounds);
+        layer.draw(canvas);
+
         // draw lines
-        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()*currentValue, canvas.getWidth(), canvas.getHeight()*currentValue, currentPaint);
-        canvas.drawLine(canvas.getWidth()/2, canvas.getHeight()*targetValue, canvas.getWidth(), canvas.getHeight()*targetValue, targetPaint);
-
-    }
-
-    /**
-     * Gets the example drawable attribute value.
-     *
-     * @return The example drawable attribute value.
-     */
-    public Drawable getExampleDrawable() {
-        return mExampleDrawable;
-    }
-
-    /**
-     * Sets the view's example drawable attribute value. In the example view, this drawable is
-     * drawn above the text.
-     *
-     * @param exampleDrawable The example drawable attribute value to use.
-     */
-    public void setExampleDrawable(Drawable exampleDrawable) {
-        mExampleDrawable = exampleDrawable;
+        canvas.drawLine(width/2,height*currentValue/maxValue,width,height*currentValue/maxValue,currentPaint);
+        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height*currentValue/maxValue-mTextHeight, mTextPaint);
+        canvas.drawLine(width/2,height*targetValue/maxValue,width,height*targetValue/maxValue,targetPaint);
+        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height*targetValue/maxValue-mTextHeight, mTextPaint);
     }
 
     // getter and setter
@@ -201,6 +190,7 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         } else {
             this.targetValue = targetValue;
         }
+        setCurrentValue(targetValue);
         invalidate();
     }
 
@@ -209,9 +199,27 @@ public class AbsoluteRegulatorView extends RelativeLayout {
         // get vertical pos
         float y = e.getY();
         // linear transform to target value
-        float value = (y - 0) / (getHeight() - 0) * (maxValue - minValue) + minValue;
+        float value = (y) / (getHeight()) * (maxValue - minValue) + minValue;
         // set slider value
         this.setTargetValue(value);
         return true;
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        // scale pictures
+        resizeImages(w, h);
+    }
+
+    private void resizeImages(int w, int h)
+    {
+        // create new images
+        Bitmap bmMin = BitmapFactory.decodeResource(getResources(), R.drawable.thermometer_min);
+        Bitmap bmMax = BitmapFactory.decodeResource(getResources(), R.drawable.thermometer_max);
+        imageMin = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMin, w, h, false));
+        imageMin.setGravity(Gravity.BOTTOM);
+        imageMax = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMax, w, h, false));
+        imageMax.setGravity(Gravity.BOTTOM);
     }
 }
