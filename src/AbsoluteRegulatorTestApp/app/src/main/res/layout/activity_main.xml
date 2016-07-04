@@ -19,6 +19,8 @@
         app:currentValueColor="#0000ff"
         app:targetValueColor="#3cff00"
         app:minImage="@drawable/thermometer_min"
-        app:maxImage="@drawable/thermometer_max" />
+        app:maxImage="@drawable/thermometer_max"
+        app:indicatorLineSize="10"
+        app:indicatorTextSize="70"/>
 
 </FrameLayout>

@@ -20,7 +20,6 @@ import android.view.View;
 
 /**
  * TODO: document your custom view class.
- * TODO: draw current and target values (improve)
  * TODO: add vibration feedback
  */
 public class AbsoluteRegulatorView extends View {
@@ -50,11 +49,17 @@ public class AbsoluteRegulatorView extends View {
     private int currentValueColor;
     private int targetValueColor;
 
+    private int indicatorLineSize;
+    private int indicatorTextSize;
+
     // regulator values
     private float minValue = 0;
     private float maxValue = 100;
     private float currentValue = 25;
     private float targetValue = 50;
+
+    private String displayTextCurrent = "";
+    private String displayTextTarget = "";
 
     public AbsoluteRegulatorView(Context context) {
         super(context);
@@ -94,6 +99,12 @@ public class AbsoluteRegulatorView extends View {
         if (a.hasValue(R.styleable.AbsoluteRegulatorView_targetValueColor)) {
             targetValueColor = a.getColor(R.styleable.AbsoluteRegulatorView_targetValueColor, 0);
         }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_indicatorLineSize)) {
+            indicatorLineSize = a.getInteger(R.styleable.AbsoluteRegulatorView_indicatorLineSize, 0);
+        }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_indicatorTextSize)) {
+            indicatorTextSize = a.getInteger(R.styleable.AbsoluteRegulatorView_indicatorTextSize, 0);
+        }
 
         a.recycle();
 
@@ -105,11 +116,11 @@ public class AbsoluteRegulatorView extends View {
         // paint objects for value indicator lines
         targetPaint = new Paint();
         targetPaint.setColor(targetValueColor);
-        targetPaint.setStrokeWidth(50);
+        targetPaint.setStrokeWidth(indicatorLineSize);
 
         currentPaint = new Paint();
         currentPaint.setColor(currentValueColor);
-        currentPaint.setStrokeWidth(50);
+        currentPaint.setStrokeWidth(indicatorLineSize);
 
         // add images
         width = 900;
@@ -130,9 +141,9 @@ public class AbsoluteRegulatorView extends View {
     }
 
     private void invalidateTextPaintAndMeasurements() {
-        mTextPaint.setTextSize(75);
+        mTextPaint.setTextSize(indicatorTextSize);
         mTextPaint.setColor(Color.BLACK);
-        mTextWidth = mTextPaint.measureText("99");
+        mTextWidth = mTextPaint.measureText(Float.toString(maxValue));
 
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
         mTextHeight = fontMetrics.bottom;
@@ -158,10 +169,15 @@ public class AbsoluteRegulatorView extends View {
         layer.draw(canvas);
 
         // draw lines
+        mTextWidth = mTextPaint.measureText(displayTextCurrent);
         canvas.drawLine(width / 2, height * normalizeValue(currentValue), width, height * normalizeValue(currentValue), currentPaint);
-        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height * normalizeValue(currentValue) - mTextHeight, mTextPaint);
-        canvas.drawLine(width / 2, height * normalizeValue(targetValue), width, height *normalizeValue(targetValue), targetPaint);
-        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height * normalizeValue(targetValue) - mTextHeight, mTextPaint);
+        mTextPaint.setColor(currentValueColor);
+        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height * normalizeValue(currentValue) + 2 * (mTextHeight + indicatorLineSize + 2), mTextPaint);
+
+        mTextWidth = mTextPaint.measureText(displayTextTarget);
+        canvas.drawLine(width / 2, height * normalizeValue(targetValue), width, height * normalizeValue(targetValue), targetPaint);
+        mTextPaint.setColor(targetValueColor);
+        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height * normalizeValue(targetValue) - mTextHeight + 2, mTextPaint);
     }
 
     // getter and setter
@@ -191,6 +207,8 @@ public class AbsoluteRegulatorView extends View {
 
     public void setCurrentValue(float currentValue) {
         this.currentValue = currentValue;
+        displayTextCurrent = Float.toString(currentValue);
+        displayTextCurrent = displayTextCurrent.substring(0, displayTextCurrent.indexOf(".") + 2);
         invalidate();
     }
 
@@ -207,6 +225,8 @@ public class AbsoluteRegulatorView extends View {
             this.targetValue = targetValue;
         }
         setCurrentValue(targetValue);
+        displayTextTarget = Float.toString(targetValue);
+        displayTextTarget = displayTextTarget.substring(0, displayTextTarget.indexOf(".") + 2);
         invalidate();
     }
 

@@ -6,5 +6,7 @@
         <attr name="targetValueColor" format="color" />
         <attr name="minImage" format="reference" />
         <attr name="maxImage" format="reference" />
+        <attr name="indicatorLineSize" format="integer" />
+        <attr name="indicatorTextSize" format="integer" />
     </declare-styleable>
 </resources>
