@@ -224,7 +224,6 @@ public class AbsoluteRegulatorView extends View {
         } else {
             this.targetValue = targetValue;
         }
-        setCurrentValue(targetValue);
         displayTextTarget = Float.toString(targetValue);
         displayTextTarget = displayTextTarget.substring(0, displayTextTarget.indexOf(".") + 2);
         invalidate();
