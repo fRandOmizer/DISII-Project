@@ -1,44 +1,83 @@
 package com.zan.richard.volume;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.RectF;
+import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by zanri_000 on 03-Jul-16.
+ * Created by Richard Zan
  */
 public class Volume extends View {
-    private boolean ShowLines;
-    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private String TAG = "RichardZan";
-    private float initialX = 0.0f;
-    private float initialY = 0.0f;
-    public float CurrentValue = 50.0f;
-    public float Max = 100.0f;
-    public float Min = 0.0f;
 
+    private TextPaint paintText;
+    private Paint paintWaves;
 
-    public Volume(Context context, AttributeSet attrs) {
+    private float initialX;
+    private float initialY;
+
+    public float CurrentValue;
+
+    private float Max;
+    private float Min;
+    private int WavesColor;
+    private int NumberOfWaves;
+
+    public Volume(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
-        this.ShowLines = false;
 
-        paint.setColor(Color.BLACK);
+        //setting the text painter properties
+        paintText = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
+        paintText.setTextAlign(Paint.Align.CENTER);
+        paintText.setColor(Color.BLACK);
+        paintText.setTextSize(20);
+
+        //setting the drawing painter properties
+        paintWaves = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintWaves.setColor(WavesColor);
+        paintWaves.setStrokeWidth(10);
+        paintWaves.setStyle(Paint.Style.STROKE);
+
+        //inner values for motion capturing
+        initialX = 0.0f;
+        initialY = 0.0f;
+
+        //widget properties
+        CurrentValue = 50.0f;
+        Max = 100.0f;
+        Min = 0.0f;
+        WavesColor = Color.BLACK;
+        paintWaves.setColor(WavesColor);
+        NumberOfWaves = 5;
+    }
+
+    //setter
+    public void setView(float min, float max, float currentValue, int wavesColor, int numberOfWaves)
+    {
+        CurrentValue = currentValue;
+        Min=min;
+        Max=max;
+        WavesColor=wavesColor;
+        NumberOfWaves = numberOfWaves;
+
+        this.invalidate();
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        //temp values for calculation
         float diffX = 0.0f;
         float diffY = 0.0f;
         float diff = 0.0f;
         float sign = 1.0f;
+        float speed = 200.0f;
 
         switch (event.getActionMasked()) {
 
@@ -52,16 +91,19 @@ public class Volume extends View {
                 {
                     sign = -1;
                 }
+                //calculating euclidean distance + difference which will be use for widget
                 diffX = (initialX - event.getX()) * (initialX - event.getX());
                 diffY = (initialY - event.getY()) * (initialY - event.getY());
-                diff = sign * ((float) Math.sqrt(diffX+diffY)) / (super.getMeasuredHeight()/256);
+                diff = sign * ((float) Math.sqrt(diffX+diffY)) / (super.getMeasuredHeight()/speed);
 
+                //checking if we got to the boundaries
                 if (diff + CurrentValue > Min && diff + CurrentValue < Max)
                 {
                     CurrentValue += diff;
                 }
                 else
                 {
+                    //checking if we got the minimum or maximum
                     if(diff + CurrentValue < Min)
                     {
                         CurrentValue = Min;
@@ -73,6 +115,7 @@ public class Volume extends View {
                     }
                 }
 
+                //changing global variables
                 initialX = event.getX();
                 initialY = event.getY();
                 break;
@@ -82,16 +125,19 @@ public class Volume extends View {
                 {
                     sign = -1;
                 }
+                //calculating euclidean distance + difference which will be use for widget
                 diffX = (initialX - event.getX()) * (initialX - event.getX());
                 diffY = (initialY - event.getY()) * (initialY - event.getY());
-                diff = sign * ((float) Math.sqrt(diffX+diffY)) / (super.getMeasuredHeight()/256);
+                diff = sign * ((float) Math.sqrt(diffX+diffY)) / (super.getMeasuredHeight()/speed);
 
+                //checking if we got to the boundaries
                 if (diff + CurrentValue > Min && diff + CurrentValue < Max)
                 {
                     CurrentValue += diff;
                 }
                 else
                 {
+                    //checking if we got the minimum or maximum
                     if(diff + CurrentValue < Min)
                     {
                         CurrentValue = Min;
@@ -103,6 +149,7 @@ public class Volume extends View {
                     }
                 }
 
+                //changing global variables
                 initialX = 0.0f;
                 initialY = 0.0f;
                 break;
@@ -120,27 +167,36 @@ public class Volume extends View {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-
+    public void onDraw(Canvas canvas)
+    {
+        //temp variables used for center of widget
         float widthCenter = super.getMeasuredWidth()/2;
-        float heightBase = 2*super.getMeasuredHeight()/3;
-        float currentLevel = 2 * (super.getMeasuredHeight()/3)
-                - (super.getMeasuredHeight()/(3*(Max-Min)))*CurrentValue;
+        float heightCenter = 2*super.getMeasuredHeight()/3;
 
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(20);
-        canvas.drawText(Integer.toString(Math.round(CurrentValue)), widthCenter, heightBase+10, paint);
+        //drawing text
+        canvas.drawText(Integer.toString(Math.round(CurrentValue)), widthCenter, heightCenter+15, paintText);
 
-        Paint myPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        myPaint.setStrokeWidth(20);
-        myPaint.setColor(0xffff0000);   //color.RED
+        //drawing waves
+        for (int i=0; i<NumberOfWaves; i++)
+        {
+            //calculating radius, from smallest to biggest
+            float radius = (i+1)*widthCenter/(NumberOfWaves);
 
-        canvas.drawLine(widthCenter,
-                currentLevel,
-                widthCenter,
-                heightBase,
-                myPaint);
+            //creating circle
+            final RectF oval = new RectF();
+            oval.set(widthCenter - radius,
+                    heightCenter - radius,
+                    widthCenter + radius,
+                    heightCenter + radius);
 
-
+            //checking if we should draw another wave
+            if(((i)*(Max-Min)/NumberOfWaves)<=(CurrentValue-Min))
+            {
+                if(CurrentValue != Min)
+                {
+                    canvas.drawArc(oval, 240, 60, false, paintWaves);
+                }
+            }
+        }
     }
 }
