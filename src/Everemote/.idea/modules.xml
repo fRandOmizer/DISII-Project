@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/Everemote.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/Everemote.iml" />
       <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app/app.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app/app.iml" />
+      <module fileurl="file://$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets/everewidgets.iml" filepath="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets/everewidgets.iml" />
     </modules>
   </component>
 </project>

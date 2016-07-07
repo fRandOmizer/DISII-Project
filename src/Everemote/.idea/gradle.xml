@@ -9,12 +9,14 @@
           <set>
             <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote" />
             <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets" />
           </set>
         </option>
         <option name="myModules">
           <set>
             <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote" />
             <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets" />
           </set>
         </option>
       </GradleProjectSettings>
