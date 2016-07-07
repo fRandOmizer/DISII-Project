@@ -3,6 +3,6 @@
         <attr name="offsetBottom" format="float" />
         <attr name="offsetTop" format="float" />
         <attr name="paddingToImage" format="float" />
-        <attr name="main_image" format="reference" />
+        <attr name="mainImage" format="reference" />
     </declare-styleable>
 </resources>

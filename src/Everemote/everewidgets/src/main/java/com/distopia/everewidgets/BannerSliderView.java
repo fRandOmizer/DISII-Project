@@ -86,7 +86,7 @@ public class BannerSliderView extends LinearLayout {
                 mOffsetBottom   = a.getFloat(R.styleable.BannerSliderView_offsetBottom, 0.15f);
                 mOffsetTop      = a.getFloat(R.styleable.BannerSliderView_offsetTop, 0.0f);
                 mPaddingToImage = a.getFloat(R.styleable.BannerSliderView_paddingToImage, 0.2f);
-                mImage          = a.getResourceId(R.styleable.BannerSliderView_main_image,
+                mImage          = a.getResourceId(R.styleable.BannerSliderView_mainImage,
                                                   R.drawable.tv_transparent_s);
             } finally {
                 a.recycle();
