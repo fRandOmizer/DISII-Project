@@ -13,7 +13,7 @@ import android.view.View;
 /**
  * Created by Richard Zan
  */
-public class Volume extends View {
+public class VolumeView extends View {
 
     private TextPaint paintText;
     private Paint paintWaves;
@@ -28,7 +28,7 @@ public class Volume extends View {
     private int WavesColor;
     private int NumberOfWaves;
 
-    public Volume(Context context, AttributeSet attrs)
+    public VolumeView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
