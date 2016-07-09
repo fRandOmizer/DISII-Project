@@ -17,10 +17,10 @@
         android:layout_height="match_parent"
         app:minValue="-100"
         app:maxValue="100"
-        app:currentValueColor="#0000ff"
-        app:targetValueColor="#3cff00"
-        app:minImage="@drawable/thermometer_min"
-        app:maxImage="@drawable/thermometer_max"
+        app:currentValueColor="#000000"
+        app:targetValueColor="#000000"
+        app:minImage="@drawable/window"
+        app:maxImage="@drawable/shutter"
         app:indicatorLineSize="10"
         app:indicatorTextSize="70"/>
 
