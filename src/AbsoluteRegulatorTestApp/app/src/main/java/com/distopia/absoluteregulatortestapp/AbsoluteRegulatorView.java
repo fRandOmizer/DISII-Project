@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Vibrator;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -41,6 +42,9 @@ public class AbsoluteRegulatorView extends View {
     // paint objects
     private Paint currentPaint;
     private Paint targetPaint;
+
+    // vibrator
+    private Vibrator vibrator;
 
     // regulator specific attributes
 
@@ -118,6 +122,9 @@ public class AbsoluteRegulatorView extends View {
         }
 
         a.recycle();
+
+        // add vibrator
+        vibrator = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         // Set up a default TextPaint object
         mTextPaint = new TextPaint();
@@ -248,8 +255,10 @@ public class AbsoluteRegulatorView extends View {
     public void setTargetValue(float targetValue) {
         if (targetValue < minValue) {
             this.targetValue = minValue;
+            vibrator.vibrate(2);
         } else if (targetValue > maxValue) {
             this.targetValue = maxValue;
+            vibrator.vibrate(2);
         } else {
             this.targetValue = targetValue;
         }
