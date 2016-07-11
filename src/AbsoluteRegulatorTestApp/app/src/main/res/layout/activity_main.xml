@@ -15,13 +15,14 @@
         android:id="@+id/myView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:minValue="-100"
+        app:minValue="0"
         app:maxValue="100"
         app:currentValueColor="#000000"
         app:targetValueColor="#000000"
         app:minImage="@drawable/window"
         app:maxImage="@drawable/shutter"
         app:indicatorLineSize="10"
-        app:indicatorTextSize="70"/>
+        app:indicatorTextSize="70"
+        app:orientation="1"/>
 
 </FrameLayout>

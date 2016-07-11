@@ -23,6 +23,12 @@ import android.view.View;
  * TODO: add vibration feedback
  */
 public class AbsoluteRegulatorView extends View {
+    // constants
+    public static final int BOTTOM_TO_TOP = 0;
+    public static final int TOP_TO_BOTTOM = 1;
+    public static final int LEFT_TO_RIGHT = 2;
+    public static final int RIGHT_TO_LEFT = 3;
+
     // default stuff
     private TextPaint mTextPaint;
     private float mTextWidth;
@@ -45,6 +51,8 @@ public class AbsoluteRegulatorView extends View {
     private BitmapDrawable imageMin;
     private BitmapDrawable imageMax;
     private LayerDrawable layer;
+
+    private int orientation;
 
     private int currentValueColor;
     private int targetValueColor;
@@ -105,6 +113,9 @@ public class AbsoluteRegulatorView extends View {
         if (a.hasValue(R.styleable.AbsoluteRegulatorView_indicatorTextSize)) {
             indicatorTextSize = a.getInteger(R.styleable.AbsoluteRegulatorView_indicatorTextSize, 0);
         }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_orientation)) {
+            orientation = a.getInteger(R.styleable.AbsoluteRegulatorView_orientation, 0);
+        }
 
         a.recycle();
 
@@ -127,7 +138,8 @@ public class AbsoluteRegulatorView extends View {
         height = 1400;
         resizeImages(width, height);
 
-        ClipDrawable clippy = new ClipDrawable(imageMax, Gravity.BOTTOM, 2);
+        ClipDrawable clippy;
+        clippy = new ClipDrawable(imageMax, Gravity.BOTTOM, 2);
         clippy.setVisible(true, true);
         clippy.setLevel(10000);
 
@@ -159,25 +171,42 @@ public class AbsoluteRegulatorView extends View {
             resizeImages(width, height);
         }
 
+        // set values according to orientation
+        float ncv = 0;
+        float ntv = 0;
+        int x1 = 0;
+        int y1 = 0;
+        int x2 = width;
+        int y2 = height;
+        if (orientation == BOTTOM_TO_TOP) {
+            ncv = 1 - normalizeValue(currentValue);
+            ntv = 1 - normalizeValue(targetValue);
+            y1 = Math.round(height * ncv);
+        } else if ((orientation == TOP_TO_BOTTOM)) {
+            ncv = normalizeValue(currentValue);
+            ntv = normalizeValue(targetValue);
+            y2 = Math.round(height * ncv);
+        }
+
         // draw images
         Rect bounds = new Rect(0, 0, width, height);
         layer.setBounds(bounds);
         imageMin.setBounds(bounds);
-        bounds.set(0, Math.round(height * normalizeValue(currentValue)), width, height);
+        bounds.set(x1, y1, x2, y2);
         imageMax.setBounds(bounds);
         layer.getDrawable(1).setBounds(bounds);
         layer.draw(canvas);
 
         // draw lines
         mTextWidth = mTextPaint.measureText(displayTextCurrent);
-        canvas.drawLine(width / 2, height * normalizeValue(currentValue), width, height * normalizeValue(currentValue), currentPaint);
+        canvas.drawLine(width * 0.66f, height * ncv, width, height * ncv, currentPaint);
         mTextPaint.setColor(currentValueColor);
-        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height * normalizeValue(currentValue) + 2 * (mTextHeight + indicatorLineSize + 2), mTextPaint);
+        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height * ncv + 2 * (mTextHeight + indicatorLineSize + 2), mTextPaint);
 
         mTextWidth = mTextPaint.measureText(displayTextTarget);
-        canvas.drawLine(width / 2, height * normalizeValue(targetValue), width, height * normalizeValue(targetValue), targetPaint);
+        canvas.drawLine(width * 0.66f, height * ntv, width, height * ntv, targetPaint);
         mTextPaint.setColor(targetValueColor);
-        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height * normalizeValue(targetValue) - mTextHeight + 2, mTextPaint);
+        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height * ntv - mTextHeight + 2, mTextPaint);
     }
 
     // getter and setter
@@ -234,7 +263,12 @@ public class AbsoluteRegulatorView extends View {
         // get vertical pos
         float y = e.getY();
         // linear transform to target value
-        float value = mapToRange(y, 0, height, minValue, maxValue);
+        float value = mapToRange(y, 0, height, 0, 1);
+        // invert if bottom to top
+        if (orientation == BOTTOM_TO_TOP) {
+            value = 1 - value;
+        }
+        value = mapToRange(value, 0, 1, minValue, maxValue);
         // set slider value
         this.setTargetValue(value);
         return true;
@@ -252,13 +286,23 @@ public class AbsoluteRegulatorView extends View {
         Bitmap bmMin = BitmapFactory.decodeResource(getResources(), minImgId);
         Bitmap bmMax = BitmapFactory.decodeResource(getResources(), maxImgId);
         imageMin = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMin, w, h, false));
-        imageMin.setGravity(Gravity.BOTTOM);
         imageMax = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMax, w, h, false));
-        imageMax.setGravity(Gravity.BOTTOM);
+
+        if (orientation == TOP_TO_BOTTOM) {
+            imageMin.setGravity(Gravity.TOP + Gravity.FILL);
+            imageMax.setGravity(Gravity.TOP + Gravity.FILL_HORIZONTAL);
+        } else {
+            imageMin.setGravity(Gravity.BOTTOM + Gravity.FILL);
+            imageMax.setGravity(Gravity.BOTTOM + Gravity.FILL_HORIZONTAL);
+        }
     }
 
     private float normalizeValue(float value) {
-        return mapToRange(value, getMinValue(), getMaxValue(), 0, 1);
+        if (orientation == TOP_TO_BOTTOM) {
+            return mapToRange(value, getMinValue(), getMaxValue(), 0, 1);
+        } else {
+            return mapToRange(value, getMinValue(), getMaxValue(), 0, 1);
+        }
     }
 
     private float mapToRange(float value, float inMin, float inMax, float outMin, float outMax) {
