@@ -13,7 +13,7 @@ import android.view.View;
 /**
  * Created by Adrian on 27.06.2016.
  */
-public class CircleWidget extends View {
+public class CircleView extends View {
 
     //constants
     final float strokeWidth = 5f;
@@ -36,7 +36,7 @@ public class CircleWidget extends View {
 
     private Rect textBounds = new Rect();
 
-    public CircleWidget(Context context, AttributeSet attrs) {
+    public CircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }

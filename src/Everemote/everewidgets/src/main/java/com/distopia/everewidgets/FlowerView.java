@@ -14,7 +14,7 @@ import android.view.View;
 /**
  * Created by Adrian on 25.06.2016.
  */
-public class FlowerWidget extends View {
+public class FlowerView extends View {
 
     //constants
     final float strokeWidth = 5f;
@@ -43,7 +43,7 @@ public class FlowerWidget extends View {
     static Path[] pathArray;
     private Rect textBounds = new Rect();
 
-    public FlowerWidget(Context context, AttributeSet attrs) {
+    public FlowerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
