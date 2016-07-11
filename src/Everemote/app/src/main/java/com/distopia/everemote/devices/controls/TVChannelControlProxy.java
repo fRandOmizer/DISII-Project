@@ -1,4 +1,4 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 import java.util.ArrayList;
 
@@ -6,9 +6,9 @@ import java.util.ArrayList;
  * Proxy representing a tv
  * Created by chris on 05.07.2016.
  */
-public class TVProxy extends DeviceProxy implements IChannelSelectable {
+public class TVChannelControlProxy extends ControlProxy implements IChannelSelectable {
 
-    public TVProxy() {
+    public TVChannelControlProxy() {
     }
 
     @Override

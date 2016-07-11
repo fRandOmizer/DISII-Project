@@ -1,11 +1,11 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 /**
  * Created by chris on 09.07.2016.
  */
-public class ShutterProxy extends DeviceProxy implements IRegulatabble {
+public class ShutterControlProxy extends ControlProxy implements IRegulatabble {
 
-    public ShutterProxy() {
+    public ShutterControlProxy() {
     }
 
     @Override

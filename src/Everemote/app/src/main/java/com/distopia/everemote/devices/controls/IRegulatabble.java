@@ -1,4 +1,4 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 /**
  * Things that can be regulated by a target value.

@@ -1,4 +1,4 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 /**
  * Interface for devices which can be turned on or off.

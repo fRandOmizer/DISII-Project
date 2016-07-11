@@ -1,13 +1,13 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 import java.util.ArrayList;
 
 /**
  * Created by chris on 09.07.2016.
  */
-public class RadioProxy extends DeviceProxy implements IChannelSelectable {
+public class RadioControlProxy extends ControlProxy implements IChannelSelectable {
 
-    public RadioProxy() {
+    public RadioControlProxy() {
     }
 
     @Override

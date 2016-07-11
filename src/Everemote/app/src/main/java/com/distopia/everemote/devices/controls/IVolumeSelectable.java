@@ -1,4 +1,4 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 /**
  * Created by chris on 05.07.2016.

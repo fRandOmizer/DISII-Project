@@ -1,4 +1,4 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 /**
  * Represents a channel for example of a tv or a radio.

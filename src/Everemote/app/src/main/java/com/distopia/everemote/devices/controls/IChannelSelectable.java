@@ -1,6 +1,5 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**

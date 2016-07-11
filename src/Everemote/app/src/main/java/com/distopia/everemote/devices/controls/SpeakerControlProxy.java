@@ -1,11 +1,11 @@
-package com.distopia.everemote.devices;
+package com.distopia.everemote.devices.controls;
 
 /**
  * Created by chris on 05.07.2016.
  */
-public class SpeakerProxy extends DeviceProxy implements IVolumeSelectable {
+public class SpeakerControlProxy extends ControlProxy implements IVolumeSelectable {
 
-    public SpeakerProxy() {
+    public SpeakerControlProxy() {
     }
 
     @Override
