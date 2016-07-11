@@ -9,14 +9,14 @@
     android:orientation="vertical">
 
     <com.distopia.everewidgets.AbsoluteRegulatorView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <com.distopia.everewidgets.BannerSliderView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.distopia.everewidgets.FlowerWidget
+    <com.distopia.everewidgets.FlowerView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.distopia.everewidgets.CircleWidget
+    <com.distopia.everewidgets.CircleView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
