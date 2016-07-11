@@ -1,5 +1,0 @@
-<resources>
-    <declare-styleable name="BannerSliderPageFragment">
-        <attr name="image" format="reference" />
-    </declare-styleable>
-</resources>
