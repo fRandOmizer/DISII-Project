@@ -18,12 +18,10 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.distopia.everewidgets.R;
-
-import java.util.Arrays;
-
 /**
- * TODO: document your custom view class.
+ * Represents a slider whose active page is centered in the middle of the the view. An image can be
+ * added to this middle view. Additionally, the left and right views are hinted on the screen, for a
+ * better visibility.
  */
 public class BannerSliderView extends LinearLayout {
     private static final String TAG = "BannerSliderView";
@@ -39,37 +37,64 @@ public class BannerSliderView extends LinearLayout {
      */
     private PagerAdapter mPagerAdapter;
 
+    /**
+     * Settings which are later extracted from the XML attributes.
+     */
     private float mOffsetBottom   = 0.15f;
     private float mOffsetTop      = 0.0f;
     private float mPaddingToImage = 0.2f;
     private int mImage            = R.drawable.tv_transparent_s;
     private int[] mImages         = {R.drawable.default_image};
 
+    /**
+     * Creates a new banner slider for the given context.
+     * @param context The context to display the view in.
+     */
     public BannerSliderView(Context context) {
         super(context);
         init(context, null);
     }
 
+    /**
+     * Creates a new banner slider for the given context.
+     * @param context The context to display the view in.
+     * @param attrs Possible attributes from the XML file.
+     */
     public BannerSliderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
+    /**
+     * Creates a new banner slider for the given context.
+     * @param context The context to display the view in.
+     * @param attrs Possible attributes from the XML file.
+     * @param defStyle Won't be used here.
+     */
     public BannerSliderView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs);
     }
 
+    /**
+     * Initializes the widget with the given attributes (offsets, margins, etc.). Initializes the
+     * pager and adds all images to the pager.
+     * @param context The context to initialize in.
+     * @param attrs The XML attributes.
+     */
     private void init(Context context, AttributeSet attrs) {
+        // Inflates this view.
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.banner_slider_view, this);
 
-        // Instantiate a ViewPager and a PagerAdapter.
+        // Instantiates a ViewPager and a PagerAdapter.
         mPager = (BannerSliderViewPager) findViewById(R.id.pager);
         try {
             FragmentManager fragManager = ((FragmentActivity) context).getSupportFragmentManager();
             mPagerAdapter = new BannerSliderPagerAdapter(fragManager);
             mPager.setAdapter(mPagerAdapter);
+            // The lines below allow for a centering of the middle page as well as displaying the
+            // left and right pages on the screen.
             mPager.setClipToPadding(false);
             mPager.setOffscreenPageLimit(2);
             mPager.setCurrentItem(1);
@@ -77,6 +102,7 @@ public class BannerSliderView extends LinearLayout {
             Log.e("BannerSliderView", "Can't get fragment manager");
         }
 
+        // Extracts possible XML attributes.
         if(attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
@@ -93,6 +119,7 @@ public class BannerSliderView extends LinearLayout {
             }
         }
 
+        // Sets the center image of the pager.
         ((ImageView) findViewById(R.id.image)).setImageResource(mImage);
 
         setMargins();
@@ -117,34 +144,67 @@ public class BannerSliderView extends LinearLayout {
         setImages(ss.mImagesState);
     }
 
+    /**
+     * Sets the offset of the image to the bottom of the view.
+     * @param offsetBottom The offset as a value between (incl.) 0 and 1.
+     */
     public void setOffsetBottom(float offsetBottom) {
+        assert(offsetBottom >= 0 && offsetBottom <= 1);
         mOffsetBottom = offsetBottom;
         setMargins();
     }
 
+    /**
+     * Returns the offset of the image to the bottom of the view.
+     * @return The bottom offset.
+     */
     public float getOffsetBottom() {
         return mOffsetBottom;
     }
 
+    /**
+     * Sets the offset of the image to the top of the view.
+     * @param offsetTop The offset as a value between (incl.) 0 and 1.
+     */
     public void setOffsetTop(float offsetTop) {
+        assert(offsetTop >= 0 && offsetTop <= 1);
         mOffsetTop = offsetTop;
         setMargins();
     }
 
+    /**
+     * Returns the offset of the image to the top of the view.
+     * @return The top offset.
+     */
     public float getOffsetTop() {
         return mOffsetTop;
     }
 
+    /**
+     * Sets the given list of images that are then directly displayed in the slider. The list
+     * should contain resource IDs as integers. The order of the slider pages is represented by the
+     * order of the resources in this list.
+     * @param images The list of images to display.
+     */
     public void setImages(int[] images) {
         mImages = images;
-        Log.i(TAG, "Set image list to " + Arrays.toString(images));
+        // Displays changes.
         mPagerAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Returns the list of images as resource IDs.
+     * @return The image list of the slider.
+     */
     public int[] getImages() {
         return mImages;
     }
 
+    /**
+     * Sets the margins according to the current value of the setting variables of the slider:
+     * The offset of the image to the bottom and top, and the margin of the image to the left and
+     * right borders of this view.
+     */
     private void setMargins() {
         findViewById(R.id.marginleft).getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -174,21 +234,21 @@ public class BannerSliderView extends LinearLayout {
                 }
         );
 
-                        View left = findViewById(R.id.marginleft);
-                        left.setLayoutParams(new LinearLayout.LayoutParams(0,
-                                                                           LayoutParams.MATCH_PARENT,
-                                                                           mPaddingToImage));
+        View left = findViewById(R.id.marginleft);
+        left.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                                           LayoutParams.MATCH_PARENT,
+                                                           mPaddingToImage));
 
-                        View right = findViewById(R.id.marginright);
-                        right.setLayoutParams(new LinearLayout.LayoutParams(0,
-                                                                            LayoutParams.MATCH_PARENT,
-                                                                            mPaddingToImage));
+        View right = findViewById(R.id.marginright);
+        right.setLayoutParams(new LinearLayout.LayoutParams(0,
+                                                            LayoutParams.MATCH_PARENT,
+                                                            mPaddingToImage));
 
     }
 
     /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
+     * This is the pager adapter that handles the single pages. It builds the
+     * BannerSliderPageFragments with the specified image.
      */
     private class BannerSliderPagerAdapter extends FragmentStatePagerAdapter {
         public BannerSliderPagerAdapter(FragmentManager fm) {
@@ -201,7 +261,7 @@ public class BannerSliderView extends LinearLayout {
             if(getImages() != null && position < getImages().length) {
                 bsf.setImage(getImages()[position]);
             } else {
-                Log.e(TAG, "Did not set the image of the BSF!!");
+                Log.e(TAG, "Did not set the image of the BSF!");
             }
             return bsf;
         }
@@ -216,6 +276,9 @@ public class BannerSliderView extends LinearLayout {
         }
     }
 
+    /**
+     * Just to allow parcels.
+     */
     static class SavedState extends BaseSavedState {
         int[] mImagesState;
 
