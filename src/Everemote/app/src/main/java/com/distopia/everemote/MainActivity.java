@@ -4,15 +4,19 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.AnalogClock;
+import android.widget.TextView;
 
 import com.distopia.everemote.devices.Device;
 import com.distopia.everemote.devices.Light;
 import com.distopia.everemote.devices.Shutter;
 import com.distopia.everemote.devices.Speaker;
 import com.distopia.everemote.devices.TV;
+import com.distopia.everewidgets.CircleView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RunnableFuture;
 
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable {
     private static final String TAG = "MainActivity";
@@ -45,6 +49,21 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     @Override
     public void setDevices(List<Device> devices) {
         curDevices = devices;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Do your UI stuff here!
+            }
+        });
     }
 
+    @Override
+    public void setAngle(final int angle) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((TextView) findViewById(R.id.textView)).setText("Angle: " + angle);
+            }
+        });
+    }
 }

@@ -138,12 +138,15 @@ public class DeviceFinder implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-            // calculate th rotation matrix
+            // Calculates the rotation matrix.
             SensorManager.getRotationMatrixFromVector(rMat, event.values);
-            // get the azimuth value (orientation[0]) in degree
+            // Gets the azimuth value (orientation[0]) in degrees.
             deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation )[0]) + 360) % 360;
             // Checks if we even need to consider an update.
             if(prevDeviceAngle != deviceAngle) {
+                for (DevicesChangeNotifyable subscriber : this.subscribers) {
+                    subscriber.setAngle(deviceAngle);
+                }
                 // Gathers the new device list.
                 newDevices.clear();
                 for (Device device : this.devices) {

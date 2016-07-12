@@ -12,8 +12,11 @@ import java.util.List;
 public interface DevicesChangeNotifyable {
     /**
      * Is called by the DeviceFinder when the device list has changed.
+     * Note that this method is called from outside of the UI thread!
      * @param devices The new device list the smartphone points at. The first element is the nearest
      *                device.
      */
     void setDevices(List<Device> devices);
+
+    void setAngle(int angle);
 }
