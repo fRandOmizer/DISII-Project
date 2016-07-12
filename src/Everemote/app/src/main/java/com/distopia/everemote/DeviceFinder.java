@@ -18,55 +18,41 @@ import java.util.List;
  *  that the device points to changes. Internally, it does so by means of a thread running in the
  *  background.
  */
-public class DeviceFinder extends Thread {
+public class DeviceFinder implements SensorEventListener {
     public static final String TAG = "DeviceFinder";
 
+    /**
+     * Is thrown in case the device does not have the compass sensors available.
+     */
     class InsufficientHardwareException extends Exception {
         InsufficientHardwareException(String message) {
             super(message);
         }
     }
 
-    private SensorEventListener sensorEventListener = new SensorEventListener() {
-        float[] aData       = new float[3]; // Accelerometer
-        float[] mData       = new float[3]; // Magnetometer
-        float[] rMat        = new float[9];
-        float[] iMat        = new float[9];
-        float[] orientation = new float[3];
-
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float[] data;
-            switch (event.sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    aData = event.values.clone();
-                    break;
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    mData = event.values.clone();
-                    break;
-                default: return;
-            }
-
-            if (SensorManager.getRotationMatrix( rMat, iMat, aData, mData)) {
-                deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
-                Log.i(TAG, "Updated device angle to " + deviceAngle);
-            }
-        }
-    };
-
     /// The list of subscribers that want to be informed.
     private List<DevicesChangeNotifyable> subscribers = new ArrayList<>();
     /// The list of devices to look for.
     private List<Device> devices = new ArrayList<>();
     /// The current device angle.
-    private int deviceAngle;
+    private int deviceAngle = 0;
+    /// The previous device angle (To be more efficient in the updating process).
+    private int prevDeviceAngle = 1;
 
-    /// The sensors that are used for locating devices.
+    /// Stores the current rotation matrix from which the orientation data is calculated.
+    private float[] rMat        = new float[9];
+    /// Stores current orientation data.
+    private float[] orientation = new float[3];
+
+    /// The previous and current list of devices that the phone points at. If they are not the same,
+    /// the subscribers will be informed.
+    List<Device> prevDevices = new ArrayList<>();
+    List<Device> newDevices  = new ArrayList<>();
+
+    /// The sensor manager which should be given by the calling activity.
     SensorManager sensorManager;
-    Sensor accelerometer;
-    Sensor magnetometer;
+    /// The sensor that is used for locating devices.
+    Sensor rotationSensor;
 
     /**
      * Creates a new device finder for the given subscriber which will be directly informed about
@@ -79,18 +65,11 @@ public class DeviceFinder extends Thread {
         setDevices(devices);
         addSubscriber(subscriber);
 
-        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        boolean haveAccelerometer = this.sensorManager.registerListener(sensorEventListener, this.accelerometer, SensorManager.SENSOR_DELAY_GAME );
+        this.rotationSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        boolean haveRotationSensor = this.sensorManager.registerListener(this, this.rotationSensor, SensorManager.SENSOR_DELAY_GAME);
 
-        this.magnetometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        boolean haveMagnetometer = this.sensorManager.registerListener(sensorEventListener, this.magnetometer, SensorManager.SENSOR_DELAY_GAME );
-
-        if (!haveAccelerometer && !haveMagnetometer) {
-            throw new InsufficientHardwareException("No accelerometer and magnetometer present.");
-        } else if (!haveAccelerometer) {
-            throw new InsufficientHardwareException("No accelerometer present.");
-        } else if (!haveMagnetometer) {
-            throw new InsufficientHardwareException("No magnetometer present.");
+        if (!haveRotationSensor) {
+            throw new InsufficientHardwareException("No rotation sensor present.");
         }
     }
 
@@ -151,32 +130,37 @@ public class DeviceFinder extends Thread {
         return this.devices;
     }
 
-    /**
-     * Runs the device finding method. If any change is detected, the method will inform all the
-     * subscribers about that event.
-     */
-    public void run() {
-        List<Device> prevDevices = new ArrayList<>();
-        List<Device> newDevices  = new ArrayList<>();
-        while(!interrupted()) {
-            // Gathers the new device list.
-            for(Device device : this.devices) {
-                if(device.getAngleBeginning() <= deviceAngle && deviceAngle <= device.getAngleEnd()) {
-                    newDevices.add(device);
-                }
-            }
-            // Publishes the new device list in case any changes happened.
-            if(!prevDevices.equals(newDevices)) {
-                Log.i(TAG, "Found new device list: " + newDevices.toString());
-                // Informs all subscribers about the new device list.
-                for (DevicesChangeNotifyable subscriber : this.subscribers) {
-                    Log.i(TAG, "Informing subscriber " + subscriber);
-                    subscriber.setDevices(newDevices);
-                }
-            }
-            prevDevices = newDevices;
-            newDevices.clear();
-        }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            // calculate th rotation matrix
+            SensorManager.getRotationMatrixFromVector(rMat, event.values);
+            // get the azimuth value (orientation[0]) in degree
+            deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation )[0]) + 360) % 360;
+            // Checks if we even need to consider an update.
+            if(prevDeviceAngle != deviceAngle) {
+                // Gathers the new device list.
+                newDevices.clear();
+                for (Device device : this.devices) {
+                    if (device.getAngleBeginning() <= deviceAngle && deviceAngle <= device.getAngleEnd()) {
+                        newDevices.add(device);
+                    }
+                }
+                // Publishes the new device list in case any changes happened.
+                if (!prevDevices.equals(newDevices)) {
+                    Log.i(TAG, "Found new device list: " + newDevices.toString());
+                    // Informs all subscribers about the new device list.
+                    for (DevicesChangeNotifyable subscriber : this.subscribers) {
+                        Log.i(TAG, "Informing subscriber " + subscriber);
+                        subscriber.setDevices(newDevices);
+                    }
+                    prevDevices = new ArrayList<Device>(newDevices);
+                }
+                prevDeviceAngle = deviceAngle;
+            }
+        }
     }
 }
