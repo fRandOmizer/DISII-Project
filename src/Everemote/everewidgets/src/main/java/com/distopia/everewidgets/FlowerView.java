@@ -10,53 +10,80 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 /**
- * Created by Adrian on 25.06.2016.
+ * Represents a circular widget with "flower pedals" that grow according to selection via thumb roll
  */
 public class FlowerView extends View {
 
     //constants
-    final float strokeWidth = 5f;
-    final double DONT_GROW_ANGLE = -1;
+    private final float strokeWidth = 5f;
+    private final double DONT_GROW_ANGLE = -1;
 
     // paints
-    Paint mSeperatorPaint;
-    Paint mTextPaint;
-    Paint mInnerFillPaint;
-    Paint mOuterFillPaint;
-    Paint mMarkedOuterFillPaint;
+    private Paint mSeparatorPaint;
+    private Paint mTextPaint;
+    private Paint mInnerFillPaint;
+    private Paint mOuterFillPaint;
+    private Paint mMarkedOuterFillPaint;
 
     // measurements
-    float mMaxOuterRadius;
-    float mDefaultOuterRadius;
-    float mInnerRadius;
-    Point mMidPoint;
+    private float mMaxOuterRadius;
+    private float mDefaultOuterRadius;
+    private float mInnerRadius;
+    private Point mMidPoint;
 
     // interaction
-    double mFirstContactX;
-    double mFirstContactY;
-    double mAngleOfMaxGrowth;
-    String mMarkedText = "0";
+    private double mFirstContactX;
+    private double mFirstContactY;
+    private double mAngleOfMaxGrowth;
+    private String mMarkedText = "0";
 
-    int arcCount = 10;
-    static Path[] pathArray;
+    private int arcCount = 10;
+    private static Path[] pathArray;
     private Rect textBounds = new Rect();
 
     // Is informed on every new value update of this view.
     private OnUpdateListener mListener = null;
 
+    /**
+     * Creates a new circle view
+     * @param context The views context
+     */
+    public FlowerView(Context context) {
+        super(context);
+        init();
+    }
+
+    /**
+     * Creates a new circle view
+     * @param context The views context
+     * @param attrs Attributes from the XML file
+     */
     public FlowerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
+    /**
+     * Creates a new circle view
+     * @param context The views context
+     * @param attrs Attributes from the XML file
+     * @param defStyle Style information
+     */
+    public FlowerView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
+
+    /**
+     * Initialize anything needed
+     */
     private void init() {
-        mSeperatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mSeperatorPaint.setColor(Color.argb(255,38,38,38));
-        mSeperatorPaint.setStyle(Paint.Style.STROKE);
-        mSeperatorPaint.setStrokeWidth(strokeWidth);
+        mSeparatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mSeparatorPaint.setColor(Color.argb(255,38,38,38));
+        mSeparatorPaint.setStyle(Paint.Style.STROKE);
+        mSeparatorPaint.setStrokeWidth(strokeWidth);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.argb(255,0,0,0));
@@ -87,6 +114,13 @@ public class FlowerView extends View {
         }
     }
 
+    /**
+     * Standard size changed callback
+     * @param width
+     * @param height
+     * @param oldWidth
+     * @param oldHeight
+     */
     @Override
     public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         mMaxOuterRadius = Math.min(width - (getPaddingLeft() + getPaddingRight() + 2f * strokeWidth), height - (getPaddingTop() + getPaddingBottom() + 2 * strokeWidth)) / 2f;
@@ -96,28 +130,47 @@ public class FlowerView extends View {
         mMidPoint = new Point(width / 2, height / 2);
     }
 
-    float angleToCircleX(double angle, double radius, double offset) {
+    /**
+     * Angle to circle x conversion
+     * @param angle
+     * @param radius
+     * @param offset
+     * @return
+     */
+    private float angleToCircleX(double angle, double radius, double offset) {
         return (float)(offset + Math.cos(Math.toRadians(angle)) * radius);
     }
 
-    float angleToCircleY(double angle, double radius, double offset) {
+    /**
+     * Angle to circle y conversion
+     * @param angle
+     * @param radius
+     * @param offset
+     * @return
+     */
+    private float angleToCircleY(double angle, double radius, double offset) {
         return (float)(offset + Math.sin(Math.toRadians(angle)) * radius);
     }
 
-    float determineGrowthFactorForAngle(double angle, double maxGrowthAngle) {
+    /**
+     * Angle to radius using a bell curve function
+     * @param angle
+     * @param maxGrowthAngle
+     * @return
+     */
+    private float determineGrowthFactorForAngle(double angle, double maxGrowthAngle) {
         if (maxGrowthAngle == DONT_GROW_ANGLE) {
             return 0f;
         }
 
-        /*double angleRad = Math.toRadians(angle);
-        double maxGrowthAngleRad = Math.toRadians(maxGrowthAngle);
-
-        return (float)((Math.abs(Math.cos(maxGrowthAngleRad) - Math.cos(angleRad)) + Math.abs(Math.sin(maxGrowthAngleRad) - Math.sin(angleRad))) / 4d);*/
         float result = Math.abs((0.5f - (float)(Math.abs(angle - maxGrowthAngle) / 360d)) * 2f);
-        //return result;
         return (float)Math.min(Math.exp(-Math.pow((1f - result)*5,2))*1.05f, 1.0f);
     }
 
+    /**
+     * Standard draw callback
+     * @param canvas
+     */
     @Override
     protected void onDraw (Canvas canvas) {
         super.onDraw(canvas);
@@ -150,7 +203,7 @@ public class FlowerView extends View {
             } else {
                 canvas.drawPath(pathArray[i], mOuterFillPaint);
             }
-            canvas.drawPath(pathArray[i], mSeperatorPaint);
+            canvas.drawPath(pathArray[i], mSeparatorPaint);
 
             double angle = (((360d / arcCount) * i) + ((360d / arcCount) * (i+1))) / 2d;
             double size = determineGrowthFactorForAngle(angle, mAngleOfMaxGrowth) * growthFactor;
@@ -166,12 +219,17 @@ public class FlowerView extends View {
 
         // draw display area
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mInnerFillPaint);
-        canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mSeperatorPaint);
+        canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mSeparatorPaint);
         mTextPaint.setTextSize(mInnerRadius * 2);
         mTextPaint.getTextBounds(mMarkedText, 0, mMarkedText.length(), textBounds);
         canvas.drawText(mMarkedText, mMidPoint.x - textBounds.exactCenterX(), mMidPoint.y - textBounds.exactCenterY(), mTextPaint);
     }
 
+    /**
+     * Standard touch event callback
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {

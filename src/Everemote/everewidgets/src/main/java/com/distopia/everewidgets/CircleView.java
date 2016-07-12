@@ -11,39 +11,67 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by Adrian on 27.06.2016.
+ * Represents a circular widget for choosing values depending on relative angle changes between thumb and midpoint
  */
 public class CircleView extends View {
 
     //constants
-    final float strokeWidth = 5f;
+    private final float strokeWidth = 5f;
 
     // paints
-    Paint mSeparatorPaint;
-    Paint mTextPaint;
-    Paint mInnerFillPaint;
-    Paint mOuterFillPaint;
+    private Paint mSeparatorPaint;
+    private Paint mTextPaint;
+    private Paint mInnerFillPaint;
+    private Paint mOuterFillPaint;
 
     // measurements
-    float mMaxOuterRadius;
-    float mInnerRadius;
-    Point mMidPoint;
+    private float mMaxOuterRadius;
+    private float mInnerRadius;
+    private Point mMidPoint;
 
     // interaction
-    double mAngle;
-    double mLastAngle;
-    String mText = "0";
+    private double mAngle;
+    private double mLastAngle;
+    private String mText = "0";
 
     private Rect textBounds = new Rect();
 
     // Is informed on every new value update of this view.
     private OnUpdateListener mListener = null;
 
+    /**
+     * Creates a new circle view
+     * @param context The views context
+     */
+    public CircleView(Context context) {
+        super(context);
+        init();
+    }
+
+    /**
+     * Creates a new circle view
+     * @param context The views context
+     * @param attrs Attributes from the XML file
+     */
     public CircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
+    /**
+     * Creates a new circle view
+     * @param context The views context
+     * @param attrs Attributes from the XML file
+     * @param defStyle Style information
+     */
+    public CircleView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
+
+    /**
+     * Initialize anything needed
+     */
     private void init() {
         mSeparatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mSeparatorPaint.setColor(Color.argb(255,38,38,38));
@@ -69,6 +97,13 @@ public class CircleView extends View {
         mAngle = 0;
     }
 
+    /**
+     * Standard size changed callback
+     * @param width
+     * @param height
+     * @param oldWidth
+     * @param oldHeight
+     */
     @Override
     public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         mMaxOuterRadius = Math.min(width - (getPaddingLeft() + getPaddingRight() + 2f * strokeWidth), height - (getPaddingTop() + getPaddingBottom() + 2 * strokeWidth)) / 2f;
@@ -77,6 +112,10 @@ public class CircleView extends View {
         mMidPoint = new Point(width / 2, height / 2);
     }
 
+    /**
+     * Standard draw callback
+     * @param canvas
+     */
     @Override
     protected void onDraw (Canvas canvas) {
         super.onDraw(canvas);
@@ -93,6 +132,11 @@ public class CircleView extends View {
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mMaxOuterRadius, mSeparatorPaint);
     }
 
+    /**
+     * Standard touch event callback
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
