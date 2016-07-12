@@ -65,9 +65,11 @@ public class DeviceFinder implements SensorEventListener {
         setDevices(devices);
         addSubscriber(subscriber);
 
+        // Gets the rotation sensor from the sensor manager.
         this.rotationSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         boolean haveRotationSensor = this.sensorManager.registerListener(this, this.rotationSensor, SensorManager.SENSOR_DELAY_GAME);
 
+        // Exits on unavailability.
         if (!haveRotationSensor) {
             throw new InsufficientHardwareException("No rotation sensor present.");
         }

@@ -8,5 +8,4 @@
     tools:context="com.distopia.everemote.MainActivity"
     android:orientation="vertical">
 
-
 </LinearLayout>
