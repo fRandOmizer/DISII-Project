@@ -8,5 +8,7 @@
         <attr name="maxImage" format="reference" />
         <attr name="indicatorLineSize" format="integer" />
         <attr name="indicatorTextSize" format="integer" />
+        <attr name="orientation" format="integer" />
+        <attr name="unit" format="string" />
     </declare-styleable>
 </resources>
