@@ -23,17 +23,17 @@ public class CardLayout extends ViewGroup {
     private Paint mBoxPaint;
     private Paint mTextPaint;
 
-    private int shownChild = 0;
+    private int mShownChild = 0;
     private int mCardHeaderSize = 0;
     private int mCardHeaderPosition = 0;
 
     private Rect mTmpContainerRect = new Rect();
     private Rect mTmpChildRect = new Rect();
 
-    private Rect tmpBitmapRect = new Rect();
-    private Rect textBounds = new Rect();
+    private Rect mTmpBitmapRect = new Rect();
+    private Rect mTextBounds = new Rect();
 
-    private List<CardDefinition> cardDefinitions;
+    private List<CardDefinition> mCardDefinitions;
 
     /**
      * Creates a new card layout
@@ -69,7 +69,7 @@ public class CardLayout extends ViewGroup {
      * Initialize anything needed
      */
     private void init() {
-        cardDefinitions = new ArrayList<>();
+        mCardDefinitions = new ArrayList<>();
 
         mBoxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBoxPaint.setColor(Color.argb(255,122,0,0));
@@ -88,7 +88,7 @@ public class CardLayout extends ViewGroup {
     public void addCard(CardDefinition card)
     {
         this.addView(card.getContent());
-        cardDefinitions.add(card);
+        mCardDefinitions.add(card);
     }
 
     /**
@@ -98,7 +98,7 @@ public class CardLayout extends ViewGroup {
     public void removeCard(CardDefinition card)
     {
         this.removeView(card.getContent());
-        cardDefinitions.remove(card);
+        mCardDefinitions.remove(card);
     }
 
     /**
@@ -157,7 +157,7 @@ public class CardLayout extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int count = getChildCount();
 
-        mCardHeaderSize = ((top - bottom) / 10) * cardDefinitions.size();
+        mCardHeaderSize = ((top - bottom) / 10) * mCardDefinitions.size();
         mCardHeaderPosition = top;
 
         int middleLeft = getPaddingLeft();
@@ -258,25 +258,25 @@ public class CardLayout extends ViewGroup {
 
         for (int i = 0; i < count; i++) {
             getChildAt(i).setVisibility(GONE);
-            int childId = (shownChild + i) % count;
+            int childId = (mShownChild + i) % count;
 
-            mBoxPaint.setColor(cardDefinitions.get(childId).getBackgroundColor());
+            mBoxPaint.setColor(mCardDefinitions.get(childId).getBackgroundColor());
             canvas.drawRect(mTmpContainerRect.left + (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + (i + 1) * (mCardHeaderSize / count), mTmpContainerRect.right - (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count), mBoxPaint);
 
-            tmpBitmapRect.left = mTmpContainerRect.left + (shrinkFactor * i);
-            tmpBitmapRect.top = mCardHeaderPosition - mCardHeaderSize + (i + 1) * (mCardHeaderSize / count);
-            tmpBitmapRect.bottom = mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count);
-            tmpBitmapRect.right = tmpBitmapRect.left + Math.abs(tmpBitmapRect.top - tmpBitmapRect.bottom);
-            canvas.drawBitmap(cardDefinitions.get(childId).getIcon(), null, tmpBitmapRect, mBoxPaint);
+            mTmpBitmapRect.left = mTmpContainerRect.left + (shrinkFactor * i);
+            mTmpBitmapRect.top = mCardHeaderPosition - mCardHeaderSize + (i + 1) * (mCardHeaderSize / count);
+            mTmpBitmapRect.bottom = mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count);
+            mTmpBitmapRect.right = mTmpBitmapRect.left + Math.abs(mTmpBitmapRect.top - mTmpBitmapRect.bottom);
+            canvas.drawBitmap(mCardDefinitions.get(childId).getIcon(), null, mTmpBitmapRect, mBoxPaint);
             mBoxPaint.setColor(Color.BLACK);
 
             mTextPaint.setTextSize(Math.abs(mCardHeaderSize / count));
-            mTextPaint.getTextBounds(cardDefinitions.get(childId).getHeader(), 0, cardDefinitions.get(childId).getHeader().length(), textBounds);
-            canvas.drawText(cardDefinitions.get(childId).getHeader(), tmpBitmapRect.right, (tmpBitmapRect.top+tmpBitmapRect.bottom)/2 - textBounds.exactCenterY(), mTextPaint);
+            mTextPaint.getTextBounds(mCardDefinitions.get(childId).getHeader(), 0, mCardDefinitions.get(childId).getHeader().length(), mTextBounds);
+            canvas.drawText(mCardDefinitions.get(childId).getHeader(), mTmpBitmapRect.right, (mTmpBitmapRect.top+ mTmpBitmapRect.bottom)/2 - mTextBounds.exactCenterY(), mTextPaint);
         }
 
-        getChildAt(shownChild).setVisibility(VISIBLE);
-        mBoxPaint.setColor(cardDefinitions.get(shownChild).getBackgroundColor());
+        getChildAt(mShownChild).setVisibility(VISIBLE);
+        mBoxPaint.setColor(mCardDefinitions.get(mShownChild).getBackgroundColor());
         canvas.drawRect(mTmpContainerRect.left, mCardHeaderPosition - mCardHeaderSize, mTmpContainerRect.right, mTmpContainerRect.bottom, mBoxPaint);
 
         super.dispatchDraw(canvas);
@@ -296,7 +296,7 @@ public class CardLayout extends ViewGroup {
 
                 int index = (count-1) - (int)((event.getY() - mCardHeaderPosition)/Math.abs(mCardHeaderSize/count));
 
-                shownChild = (shownChild + index) % count;
+                mShownChild = (mShownChild + index) % count;
 
                 return true;
             }

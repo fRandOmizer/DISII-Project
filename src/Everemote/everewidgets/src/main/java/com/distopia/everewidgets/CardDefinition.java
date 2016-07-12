@@ -10,10 +10,10 @@ import android.view.View;
  */
 public class CardDefinition {
 
-    private Bitmap icon;
-    private int backgroundColor;
-    private String header;
-    private View content;
+    private Bitmap mIcon;
+    private int mBackgroundColor;
+    private String mHeader;
+    private View mContent;
 
     /**
      * Constructs a card definition with all the needed information
@@ -24,20 +24,17 @@ public class CardDefinition {
      */
     public CardDefinition(Bitmap icon, int backgroundColor, String header, View content)
     {
-        this.icon = icon;
-        this.backgroundColor = backgroundColor;
-        this.header = header;
-        this.content = content;
+        this.mIcon = icon;
+        this.mBackgroundColor = backgroundColor;
+        this.mHeader = header;
+        this.mContent = content;
     }
 
     /**
      * Returns the icon to be displayed in card header
      * @return
      */
-    public Bitmap getIcon()
-    {
-        return this.icon;
-    }
+    public Bitmap getIcon() { return this.mIcon; }
 
     /**
      * Returns the background color for the card
@@ -45,7 +42,7 @@ public class CardDefinition {
      */
     public int getBackgroundColor()
     {
-        return this.backgroundColor;
+        return this.mBackgroundColor;
     }
 
     /**
@@ -54,7 +51,7 @@ public class CardDefinition {
      */
     public String getHeader()
     {
-        return this.header;
+        return this.mHeader;
     }
 
     /**
@@ -63,6 +60,6 @@ public class CardDefinition {
      */
     public View getContent()
     {
-        return this.content;
+        return this.mContent;
     }
 }

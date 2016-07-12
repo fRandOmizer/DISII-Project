@@ -17,7 +17,7 @@ import android.view.View;
 public class FlowerView extends View {
 
     //constants
-    private final float strokeWidth = 5f;
+    private final float STROKE_WIDTH = 5f;
     private final double DONT_GROW_ANGLE = -1;
 
     // paints
@@ -40,8 +40,8 @@ public class FlowerView extends View {
     private String mMarkedText = "0";
 
     private int arcCount = 10;
-    private static Path[] pathArray;
-    private Rect textBounds = new Rect();
+    private static Path[] mPathArray;
+    private Rect mTextBounds = new Rect();
 
     // Is informed on every new value update of this view.
     private OnUpdateListener mListener = null;
@@ -83,7 +83,7 @@ public class FlowerView extends View {
         mSeparatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mSeparatorPaint.setColor(Color.argb(255,38,38,38));
         mSeparatorPaint.setStyle(Paint.Style.STROKE);
-        mSeparatorPaint.setStrokeWidth(strokeWidth);
+        mSeparatorPaint.setStrokeWidth(STROKE_WIDTH);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.argb(255,0,0,0));
@@ -108,9 +108,9 @@ public class FlowerView extends View {
 
         mAngleOfMaxGrowth = DONT_GROW_ANGLE;
 
-        pathArray = new Path[arcCount];
+        mPathArray = new Path[arcCount];
         for (int i = 0; i < arcCount; i++) {
-            pathArray[i] = new Path();
+            mPathArray[i] = new Path();
         }
     }
 
@@ -123,7 +123,7 @@ public class FlowerView extends View {
      */
     @Override
     public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
-        mMaxOuterRadius = Math.min(width - (getPaddingLeft() + getPaddingRight() + 2f * strokeWidth), height - (getPaddingTop() + getPaddingBottom() + 2 * strokeWidth)) / 2f;
+        mMaxOuterRadius = Math.min(width - (getPaddingLeft() + getPaddingRight() + 2f * STROKE_WIDTH), height - (getPaddingTop() + getPaddingBottom() + 2 * STROKE_WIDTH)) / 2f;
         mDefaultOuterRadius = mMaxOuterRadius / 3f * 2f;
         mInnerRadius = mDefaultOuterRadius / 2f;
 
@@ -180,8 +180,8 @@ public class FlowerView extends View {
         boolean alreadyMarked = false;
 
         for (int i = 0; i < arcCount; i++) {
-            pathArray[i].reset();
-            pathArray[i].moveTo(mMidPoint.x, mMidPoint.y);
+            mPathArray[i].reset();
+            mPathArray[i].moveTo(mMidPoint.x, mMidPoint.y);
 
             int arcPartCount = 20;
             double baseAngle = (360d / arcCount) * i;
@@ -195,22 +195,22 @@ public class FlowerView extends View {
                     marked = true;
                     alreadyMarked = true;
                 }
-                pathArray[i].lineTo(angleToCircleX(angle, mDefaultOuterRadius + size, mMidPoint.x), angleToCircleY(angle, mDefaultOuterRadius + size, mMidPoint.y));
+                mPathArray[i].lineTo(angleToCircleX(angle, mDefaultOuterRadius + size, mMidPoint.x), angleToCircleY(angle, mDefaultOuterRadius + size, mMidPoint.y));
             }
 
             if (marked){
-                canvas.drawPath(pathArray[i], mMarkedOuterFillPaint);
+                canvas.drawPath(mPathArray[i], mMarkedOuterFillPaint);
             } else {
-                canvas.drawPath(pathArray[i], mOuterFillPaint);
+                canvas.drawPath(mPathArray[i], mOuterFillPaint);
             }
-            canvas.drawPath(pathArray[i], mSeparatorPaint);
+            canvas.drawPath(mPathArray[i], mSeparatorPaint);
 
             double angle = (((360d / arcCount) * i) + ((360d / arcCount) * (i+1))) / 2d;
             double size = determineGrowthFactorForAngle(angle, mAngleOfMaxGrowth) * growthFactor;
             mTextPaint.setTextSize(Math.max((float)size*1.5f, (mDefaultOuterRadius - mInnerRadius)/2));
             String label = Integer.toString(i);
-            mTextPaint.getTextBounds(label, 0, label.length(), textBounds);
-            canvas.drawText(label, angleToCircleX(angle, (mInnerRadius+mDefaultOuterRadius+size)/2f, mMidPoint.x) - textBounds.exactCenterX(), angleToCircleY(angle, (mInnerRadius+mDefaultOuterRadius+size)/2f, mMidPoint.y) - textBounds.exactCenterY(), mTextPaint);
+            mTextPaint.getTextBounds(label, 0, label.length(), mTextBounds);
+            canvas.drawText(label, angleToCircleX(angle, (mInnerRadius+mDefaultOuterRadius+size)/2f, mMidPoint.x) - mTextBounds.exactCenterX(), angleToCircleY(angle, (mInnerRadius+mDefaultOuterRadius+size)/2f, mMidPoint.y) - mTextBounds.exactCenterY(), mTextPaint);
 
             if (marked) {
                 mMarkedText = label;
@@ -221,8 +221,8 @@ public class FlowerView extends View {
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mInnerFillPaint);
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mSeparatorPaint);
         mTextPaint.setTextSize(mInnerRadius * 2);
-        mTextPaint.getTextBounds(mMarkedText, 0, mMarkedText.length(), textBounds);
-        canvas.drawText(mMarkedText, mMidPoint.x - textBounds.exactCenterX(), mMidPoint.y - textBounds.exactCenterY(), mTextPaint);
+        mTextPaint.getTextBounds(mMarkedText, 0, mMarkedText.length(), mTextBounds);
+        canvas.drawText(mMarkedText, mMidPoint.x - mTextBounds.exactCenterX(), mMidPoint.y - mTextBounds.exactCenterY(), mTextPaint);
     }
 
     /**

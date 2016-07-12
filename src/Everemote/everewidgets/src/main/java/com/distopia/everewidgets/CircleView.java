@@ -16,7 +16,7 @@ import android.view.View;
 public class CircleView extends View {
 
     //constants
-    private final float strokeWidth = 5f;
+    private final float STROKE_WIDTH = 5f;
 
     // paints
     private Paint mSeparatorPaint;
@@ -34,7 +34,7 @@ public class CircleView extends View {
     private double mLastAngle;
     private String mText = "0";
 
-    private Rect textBounds = new Rect();
+    private Rect mTextBounds = new Rect();
 
     // Is informed on every new value update of this view.
     private OnUpdateListener mListener = null;
@@ -76,7 +76,7 @@ public class CircleView extends View {
         mSeparatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mSeparatorPaint.setColor(Color.argb(255,38,38,38));
         mSeparatorPaint.setStyle(Paint.Style.STROKE);
-        mSeparatorPaint.setStrokeWidth(strokeWidth);
+        mSeparatorPaint.setStrokeWidth(STROKE_WIDTH);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.argb(255,0,0,0));
@@ -106,7 +106,7 @@ public class CircleView extends View {
      */
     @Override
     public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
-        mMaxOuterRadius = Math.min(width - (getPaddingLeft() + getPaddingRight() + 2f * strokeWidth), height - (getPaddingTop() + getPaddingBottom() + 2 * strokeWidth)) / 2f;
+        mMaxOuterRadius = Math.min(width - (getPaddingLeft() + getPaddingRight() + 2f * STROKE_WIDTH), height - (getPaddingTop() + getPaddingBottom() + 2 * STROKE_WIDTH)) / 2f;
         mInnerRadius = mMaxOuterRadius / 3f;
 
         mMidPoint = new Point(width / 2, height / 2);
@@ -127,8 +127,8 @@ public class CircleView extends View {
         // draw display area
         mText = Integer.toString((int) mAngle);
         mTextPaint.setTextSize(mInnerRadius * 2);
-        mTextPaint.getTextBounds(mText, 0, mText.length(), textBounds);
-        canvas.drawText(mText, mMidPoint.x - textBounds.exactCenterX(), mMidPoint.y - textBounds.exactCenterY(), mTextPaint);
+        mTextPaint.getTextBounds(mText, 0, mText.length(), mTextBounds);
+        canvas.drawText(mText, mMidPoint.x - mTextBounds.exactCenterX(), mMidPoint.y - mTextBounds.exactCenterY(), mTextPaint);
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mMaxOuterRadius, mSeparatorPaint);
     }
 
