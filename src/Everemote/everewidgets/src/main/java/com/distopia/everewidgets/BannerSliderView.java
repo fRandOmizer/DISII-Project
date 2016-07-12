@@ -40,7 +40,7 @@ public class BannerSliderView extends LinearLayout {
     /**
      * The listener that is informed on slide event (if it's not null).
      */
-    OnSlideListener mListener = null;
+    private OnSlideListener mListener = null;
 
     /**
      * Settings which are later extracted from the XML attributes.
@@ -93,7 +93,7 @@ public class BannerSliderView extends LinearLayout {
         inflater.inflate(R.layout.banner_slider_view, this);
 
         // Instantiates a ViewPager and a PagerAdapter.
-        mPager = (BannerSliderViewPager) findViewById(R.id.pager);
+        mPager = (ViewPager) findViewById(R.id.pager);
         try {
             FragmentManager fragManager = ((FragmentActivity) context).getSupportFragmentManager();
             mPagerAdapter = new BannerSliderPagerAdapter(fragManager);
@@ -337,7 +337,7 @@ public class BannerSliderView extends LinearLayout {
 
     /**
      * Every class that wants to listen to slide events should implement this interface. A listener
-     * can be registered by using the setSlideListener() method of the BannerSliderView.
+     * can be registered by using the setOnSlideListener() method of the BannerSliderView.
      */
     public interface OnSlideListener {
         /**

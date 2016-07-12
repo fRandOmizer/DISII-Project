@@ -34,4 +34,9 @@ public class Channel {
     public int getChannelNumber() {
         return channelNumber;
     }
+
+    @Override
+    public String toString() {
+        return "Channel " + channelName + " @ " + channelNumber;
+    }
 }

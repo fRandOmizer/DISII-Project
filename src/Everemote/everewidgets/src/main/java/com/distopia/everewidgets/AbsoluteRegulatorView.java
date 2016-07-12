@@ -61,6 +61,11 @@ public class AbsoluteRegulatorView extends View {
     private String displayTextCurrent = "";
     private String displayTextTarget = "";
 
+    /**
+     * The listener that is informed on slide event (if it's not null).
+     */
+    private OnUpdateListener mListener = null;
+
     public AbsoluteRegulatorView(Context context) {
         super(context);
         init(null, 0);
@@ -226,6 +231,9 @@ public class AbsoluteRegulatorView extends View {
         }
         displayTextTarget = Float.toString(targetValue);
         displayTextTarget = displayTextTarget.substring(0, displayTextTarget.indexOf(".") + 2);
+        if(this.mListener != null) {
+            this.mListener.onUpdate(this.targetValue);
+        }
         invalidate();
     }
 
@@ -263,5 +271,21 @@ public class AbsoluteRegulatorView extends View {
 
     private float mapToRange(float value, float inMin, float inMax, float outMin, float outMax) {
         return outMin + ((outMax - outMin) / (inMax - inMin)) * (value - inMin);
+    }
+
+    public void setOnUpdateListener(OnUpdateListener listener) {
+        this.mListener = listener;
+    }
+
+    /**
+     * Every class that wants to listen to update events should implement this interface. A listener
+     * can be registered by using the setOnUpdateListener() method of the AbsoluteRegulatorView.
+     */
+    public interface OnUpdateListener {
+        /**
+         * Is called when the regulator view updates its value.
+         * @param value The target value the user selected, in percent between 0 and 100.
+         */
+        void onUpdate(float value);
     }
 }

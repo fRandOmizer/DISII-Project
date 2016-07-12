@@ -36,6 +36,9 @@ public class CircleView extends View {
 
     private Rect textBounds = new Rect();
 
+    // Is informed on every new value update of this view.
+    private OnUpdateListener mListener = null;
+
     public CircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
@@ -124,11 +127,32 @@ public class CircleView extends View {
 
             mLastAngle = nextAngle;
 
+            // TODO: Check if this makes sense here!
+            if(mListener != null) {
+                mListener.onUpdate((int) mAngle);
+            }
+
             invalidate();
 
             return true;
         }
 
         return false;
+    }
+
+    public void setOnUpdateListener(OnUpdateListener listener) {
+        mListener = listener;
+    }
+
+    /**
+     * Every class that wants to listen to update events should implement this interface. A listener
+     * can be registered by using the setOnUpdateListener() method of the CircleView.
+     */
+    public interface OnUpdateListener {
+        /**
+         * Is called when the circle updates its value.
+         * @param degree The degree of of the circle, between 0 and 360.
+         */
+        void onUpdate(int degree);
     }
 }

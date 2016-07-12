@@ -28,6 +28,9 @@ public class VolumeView extends View {
     private int WavesColor;
     private int NumberOfWaves;
 
+    // Is informed on every new value update of this view.
+    private OnUpdateListener mListener = null;
+
     public VolumeView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
@@ -152,6 +155,12 @@ public class VolumeView extends View {
                 //changing global variables
                 initialX = 0.0f;
                 initialY = 0.0f;
+
+                // TODO: Check if this makes sense here!
+                if(mListener != null) {
+                    mListener.onUpdate(CurrentValue);
+                }
+
                 break;
 
             case MotionEvent.ACTION_CANCEL:
@@ -198,5 +207,21 @@ public class VolumeView extends View {
                 }
             }
         }
+    }
+
+    public void setOnUpdateListener(OnUpdateListener listener) {
+        mListener = listener;
+    }
+
+    /**
+     * Every class that wants to listen to update events should implement this interface. A listener
+     * can be registered by using the setOnUpdateListener() method of the VolumeView.
+     */
+    public interface OnUpdateListener {
+        /**
+         * Is called when the volume view updates its value.
+         * @param value The value the user selected, in percent between 0 and 100.
+         */
+        void onUpdate(float value);
     }
 }

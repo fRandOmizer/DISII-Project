@@ -1,5 +1,7 @@
 package com.distopia.everemote.devices.controls;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -7,6 +9,7 @@ import java.util.ArrayList;
  * Created by chris on 05.07.2016.
  */
 public class TVChannelControlProxy extends ControlProxy implements IChannelSelectable {
+    private static final String TAG = "TVChannelControlProxy";
 
     public TVChannelControlProxy() {
     }
@@ -28,7 +31,7 @@ public class TVChannelControlProxy extends ControlProxy implements IChannelSelec
 
     @Override
     public void setCurrentChannel(Channel newChannel) {
-
+        Log.i(TAG, "Changed channel to " + newChannel);
     }
 
     @Override

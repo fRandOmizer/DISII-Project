@@ -5,7 +5,7 @@
     android:layout_alignBottom="@+id/bannerSliderParent"
     android:orientation="vertical">
 
-    <com.distopia.bannersliderapp.BannerSliderViewPager
+    <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/pager"

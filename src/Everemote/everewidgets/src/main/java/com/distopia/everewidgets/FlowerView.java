@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by Adrian on 25.06.2016.
@@ -42,6 +43,9 @@ public class FlowerView extends View {
     int arcCount = 10;
     static Path[] pathArray;
     private Rect textBounds = new Rect();
+
+    // Is informed on every new value update of this view.
+    private OnUpdateListener mListener = null;
 
     public FlowerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -189,9 +193,29 @@ public class FlowerView extends View {
         else if (event.getAction() == MotionEvent.ACTION_UP) {
             mAngleOfMaxGrowth = DONT_GROW_ANGLE;
             invalidate();
+            // TODO: Check if this makes sense here!
+            if(mListener != null) {
+                mListener.onUpdate(mMarkedText);
+            }
             return true;
         }
 
         return false;
+    }
+
+    public void setOnUpdateListener(OnUpdateListener listener) {
+        mListener = listener;
+    }
+
+    /**
+     * Every class that wants to listen to update events should implement this interface. A listener
+     * can be registered by using the setOnUpdateListener() method of the FlowerView.
+     */
+    public interface OnUpdateListener {
+        /**
+         * Is called when the flower view updates its value.
+         * @param value The value the user selected.
+         */
+        void onUpdate(String value);
     }
 }
