@@ -72,6 +72,7 @@ public class AbsoluteRegulatorView extends View {
 
     private String displayTextCurrent = "";
     private String displayTextTarget = "";
+    private String unit = "";
 
     public AbsoluteRegulatorView(Context context) {
         super(context);
@@ -119,6 +120,9 @@ public class AbsoluteRegulatorView extends View {
         }
         if (a.hasValue(R.styleable.AbsoluteRegulatorView_orientation)) {
             orientation = a.getInteger(R.styleable.AbsoluteRegulatorView_orientation, 0);
+        }
+        if (a.hasValue(R.styleable.AbsoluteRegulatorView_unit)) {
+            unit = a.getString(R.styleable.AbsoluteRegulatorView_unit);
         }
 
         a.recycle();
@@ -205,15 +209,29 @@ public class AbsoluteRegulatorView extends View {
         layer.draw(canvas);
 
         // draw lines
-        mTextWidth = mTextPaint.measureText(displayTextCurrent);
-        canvas.drawLine(width * 0.66f, height * ncv, width, height * ncv, currentPaint);
-        mTextPaint.setColor(currentValueColor);
-        canvas.drawText(Float.toString(currentValue), width - mTextWidth, height * ncv + 2 * (mTextHeight + indicatorLineSize + 2), mTextPaint);
+        int textHeightCur = Math.round(height * ncv + 2 * (mTextHeight + indicatorLineSize + 2));
+        int textHeightTar = Math.round(height * ntv - mTextHeight + 2);
+        // if tar < 0
+        if (textHeightTar < ((mTextHeight + indicatorLineSize + 2) * 2)) {
+            textHeightTar = Math.round(height * ntv + 2 * (mTextHeight + indicatorLineSize + 2));
+        }
+        // if cur and tar overlap
+        if ((textHeightCur >= (textHeightTar - 2 * (mTextHeight + indicatorLineSize + 2))) && ((textHeightCur <= (textHeightTar + (mTextHeight + indicatorLineSize + 2))))) {
+            textHeightCur -= 2 * (mTextHeight + indicatorLineSize + 2);
+        }
 
-        mTextWidth = mTextPaint.measureText(displayTextTarget);
-        canvas.drawLine(width * 0.66f, height * ntv, width, height * ntv, targetPaint);
+        mTextWidth = mTextPaint.measureText(displayTextTarget + unit);
+        canvas.drawLine(width * 0.75f, height * ntv, width, height * ntv, targetPaint);
         mTextPaint.setColor(targetValueColor);
-        canvas.drawText(Float.toString(targetValue), width - mTextWidth, height * ntv - mTextHeight + 2, mTextPaint);
+        canvas.drawText(displayTextTarget, width - mTextWidth, textHeightTar, mTextPaint);
+
+        // only print current if nessesary
+        if (!displayTextTarget.contentEquals(displayTextCurrent)) {
+            mTextWidth = mTextPaint.measureText(displayTextCurrent + unit);
+            canvas.drawLine(width * 0.75f, height * ncv, width, height * ncv, currentPaint);
+            mTextPaint.setColor(currentValueColor);
+            canvas.drawText(displayTextCurrent, width - mTextWidth, textHeightCur, mTextPaint);
+        }
     }
 
     // getter and setter
@@ -243,8 +261,7 @@ public class AbsoluteRegulatorView extends View {
 
     public void setCurrentValue(float currentValue) {
         this.currentValue = currentValue;
-        displayTextCurrent = Float.toString(currentValue);
-        displayTextCurrent = displayTextCurrent.substring(0, displayTextCurrent.indexOf(".") + 2);
+        displayTextCurrent = printValueWithUnit(currentValue);
         invalidate();
     }
 
@@ -262,8 +279,7 @@ public class AbsoluteRegulatorView extends View {
         } else {
             this.targetValue = targetValue;
         }
-        displayTextTarget = Float.toString(targetValue);
-        displayTextTarget = displayTextTarget.substring(0, displayTextTarget.indexOf(".") + 2);
+        displayTextTarget = printValueWithUnit(this.targetValue);
         invalidate();
     }
 
@@ -316,5 +332,11 @@ public class AbsoluteRegulatorView extends View {
 
     private float mapToRange(float value, float inMin, float inMax, float outMin, float outMax) {
         return outMin + ((outMax - outMin) / (inMax - inMin)) * (value - inMin);
+    }
+
+    private String printValueWithUnit(float value) {
+        String rounded = Float.toString(Math.round(value * 10) / 10.0f);
+        rounded += unit;
+        return rounded;
     }
 }

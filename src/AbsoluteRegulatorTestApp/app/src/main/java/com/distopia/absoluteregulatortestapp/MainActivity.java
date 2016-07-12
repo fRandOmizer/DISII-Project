@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     AbsoluteRegulatorView view;
     Timer timer;
 
-    final long INTERVAL = 100; // 0,1sec
+    final long INTERVAL = 10; // 0,1sec
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +31,13 @@ public class MainActivity extends AppCompatActivity {
                 a.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        float cur = view.getCurrentValue();
-                        float tar = view.getTargetValue();
+                        float cur = Math.round(view.getCurrentValue() * 10) / 10.0f;
+                        float tar = Math.round(view.getTargetValue() * 10) / 10.0f;
                         if (cur < tar) {
-                            view.setCurrentValue(cur += 1);
+                            view.setCurrentValue(cur += 0.1);
                         }
                         if (cur > tar) {
-                            view.setCurrentValue(cur -= 1);
+                            view.setCurrentValue(cur -= 0.1);
                         }
                     }
                 });

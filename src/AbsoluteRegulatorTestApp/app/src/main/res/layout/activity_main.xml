@@ -23,6 +23,7 @@
         app:maxImage="@drawable/shutter"
         app:indicatorLineSize="10"
         app:indicatorTextSize="70"
-        app:orientation="1"/>
+        app:orientation="1"
+        app:unit="%"/>
 
 </FrameLayout>
