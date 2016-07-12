@@ -38,6 +38,11 @@ public class BannerSliderView extends LinearLayout {
     private PagerAdapter mPagerAdapter;
 
     /**
+     * The listener that is informed on slide event (if it's not null).
+     */
+    OnSlideListener mListener = null;
+
+    /**
      * Settings which are later extracted from the XML attributes.
      */
     private float mOffsetBottom   = 0.15f;
@@ -122,7 +127,25 @@ public class BannerSliderView extends LinearLayout {
         // Sets the center image of the pager.
         ((ImageView) findViewById(R.id.image)).setImageResource(mImage);
 
+        // Sets the left/right/top/bottom margins for the image in the center of the slider.
         setMargins();
+
+        // Listens to slide events of the pager.
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                // Calls our listener in case one was given previously.
+                if(mListener != null) {
+                    mListener.onSlide(position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
     }
 
     @Override
@@ -142,6 +165,10 @@ public class BannerSliderView extends LinearLayout {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         setImages(ss.mImagesState);
+    }
+
+    public void setOnSlideListener(OnSlideListener listener) {
+        this.mListener = listener;
     }
 
     /**
@@ -306,5 +333,17 @@ public class BannerSliderView extends LinearLayout {
                         return new SavedState[size];
                     }
                 };
+    }
+
+    /**
+     * Every class that wants to listen to slide events should implement this interface. A listener
+     * can be registered by using the setSlideListener() method of the BannerSliderView.
+     */
+    public interface OnSlideListener {
+        /**
+         * Is called when the banner slider detects a complete slide.
+         * @param position The position of the slider that is now centered.
+         */
+        void onSlide(int position);
     }
 }

@@ -18,5 +18,10 @@ public interface DevicesChangeNotifyable {
      */
     void setDevices(List<Device> devices);
 
+    /**
+     * Is called by the DeviceFinder when the phone's angle changes.
+     * Note that this method is called from outside of the UI thread!
+     * @param angle The new angle of the phone.
+     */
     void setAngle(int angle);
 }

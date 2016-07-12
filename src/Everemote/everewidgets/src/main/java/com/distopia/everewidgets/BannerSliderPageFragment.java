@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-public class BannerSliderPageFragment extends Fragment {
+class BannerSliderPageFragment extends Fragment {
     private static final String TAG = "BannerSliderPageFrgmnt";
 
     private int mImage;

@@ -39,7 +39,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
         // Creates a new device finder (if possible) and registers itself as a subscriber.
         try {
-            this.deviceFinder = new DeviceFinder(this, allDevices, (SensorManager)getSystemService(SENSOR_SERVICE));
+            this.deviceFinder = new DeviceFinder(this,
+                                                 allDevices,
+                                                 (SensorManager) getSystemService(SENSOR_SERVICE));
         } catch (DeviceFinder.InsufficientHardwareException e) {
             Log.e(TAG, "Insufficient hardware: " + e.toString());
             finish();

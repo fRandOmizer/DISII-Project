@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 
-public class BannerSliderViewPager extends ViewPager {
+class BannerSliderViewPager extends ViewPager {
     private static final String TAG = "BannerSliderViewPager";
 
     public BannerSliderViewPager(Context context, AttributeSet attrs) {
