@@ -28,6 +28,23 @@ public class TV extends Device {
         addControl(onOffControl);
     }
 
+    /**
+     * Creates a new TV within the specified angle range.
+     * @param angleBeginning The angle in which the beginning of the TV is located.
+     * @param angleEnd The angle in which the end of the TV is located.
+     */
+    public TV(int angleBeginning, int angleEnd) {
+        super(angleBeginning, angleEnd);
+        // create controls
+        cannelControl = new TVChannelControlProxy();
+        volumeControl = new TVSpeakerControlProxy();
+        onOffControl = new TVOnOffControlProxy();
+        // add controls
+        addControl(cannelControl);
+        addControl(volumeControl);
+        addControl(onOffControl);
+    }
+
     // getter
 
     public TVChannelControlProxy getCannelControl() {

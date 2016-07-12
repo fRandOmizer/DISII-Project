@@ -14,6 +14,17 @@ public class Light extends Device {
         addControl(onOffControl);
     }
 
+    /**
+     * Creates a new light within the specified angle range.
+     * @param angleBeginning The angle in which the beginning of the light is located.
+     * @param angleEnd The angle in which the end of the light is located.
+     */
+    public Light(int angleBeginning, int angleEnd) {
+        super(angleBeginning, angleEnd);
+        onOffControl = new LightOnOffControlProxy();
+        addControl(onOffControl);
+    }
+
     public LightOnOffControlProxy getOnOffControl() {
         return onOffControl;
     }

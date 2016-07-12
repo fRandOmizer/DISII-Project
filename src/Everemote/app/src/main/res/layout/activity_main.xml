@@ -8,24 +8,5 @@
     tools:context="com.distopia.everemote.MainActivity"
     android:orientation="vertical">
 
-    <com.distopia.everewidgets.AbsoluteRegulatorView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.distopia.everewidgets.BannerSliderView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.distopia.everewidgets.FlowerView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.distopia.everewidgets.VolumeView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.distopia.everewidgets.CircleView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>
