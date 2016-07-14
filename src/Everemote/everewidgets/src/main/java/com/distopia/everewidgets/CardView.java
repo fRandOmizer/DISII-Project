@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
@@ -22,10 +21,8 @@ public class CardView extends ViewGroup {
     private Paint mTextPaint;
 
     private int mCardHeaderSize = 0;
-    private int mCardHeaderPosition = 0;
 
     private Rect mTmpContainerRect = new Rect();
-    private Rect mTmpChildRect = new Rect();
 
     private Rect mTextBounds = new Rect();
     private Rect mCardBounds = new Rect();
@@ -159,7 +156,6 @@ public class CardView extends ViewGroup {
 
         if (mCardHeaderSize == 0) {
             mCardHeaderSize = Math.abs((top - bottom) / 8);
-            mCardHeaderPosition = top;
             requestLayout();
         }
 
@@ -175,19 +171,14 @@ public class CardView extends ViewGroup {
             if (child.getVisibility() != GONE) {
                 LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
-                int width = child.getMeasuredWidth();
-                int height = child.getMeasuredHeight();
-
                 mTmpContainerRect.left = middleLeft + lp.leftMargin;
                 mTmpContainerRect.right = middleRight - lp.rightMargin;
 
                 mTmpContainerRect.top = parentTop + lp.topMargin + mCardHeaderSize;
                 mTmpContainerRect.bottom = parentBottom - lp.bottomMargin;
 
-                Gravity.apply(lp.gravity, width, height, mTmpContainerRect, mTmpChildRect);
-
-                child.layout(mTmpChildRect.left, mTmpChildRect.top,
-                        mTmpChildRect.right, mTmpChildRect.bottom);
+                child.layout(mTmpContainerRect.left, mTmpContainerRect.top,
+                        mTmpContainerRect.right, mTmpContainerRect.bottom);
             }
         }
 
@@ -240,8 +231,6 @@ public class CardView extends ViewGroup {
      * Class holding layout parameters
      */
     public static class LayoutParams extends MarginLayoutParams {
-        public int gravity = Gravity.TOP | Gravity.START;
-
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
         }

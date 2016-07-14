@@ -3,7 +3,6 @@ package com.distopia.everewidgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.RemoteViews;
 @RemoteViews.RemoteView
 public class CardLayout extends ViewGroup {
     private Rect mTmpContainerRect = new Rect();
-    private Rect mTmpChildRect = new Rect();
     private int cardOffsetFactor = 0;
     private int mBoxHeaderSize = 0;
     private int mBoxHeaderPosition = 0;
@@ -82,6 +80,7 @@ public class CardLayout extends ViewGroup {
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
+
             if (child.getVisibility() != GONE) {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, -mBoxHeaderSize);
 
@@ -113,36 +112,27 @@ public class CardLayout extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int count = getChildCount();
 
-        if (mBoxHeaderSize == 0) {
-            mBoxHeaderSize = Math.abs((top - bottom) / 10);
-            cardOffsetFactor = mBoxHeaderSize / count;
-            mBoxHeaderPosition = top;
-        }
+
+        mBoxHeaderSize = Math.abs((top - bottom) / 10);
+        cardOffsetFactor = mBoxHeaderSize / count;
+        mBoxHeaderPosition = top;
 
         int middleLeft = getPaddingLeft();
         int middleRight = right - left - getPaddingRight();
 
-
         int parentBottom = bottom - top;
-
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
+
             if (child.getVisibility() != GONE) {
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
-                int width = child.getMeasuredWidth();
-                int height = child.getMeasuredHeight();
-
                 mTmpContainerRect.left = middleLeft;
                 mTmpContainerRect.right = middleRight;
 
                 mTmpContainerRect.top = mBoxHeaderSize - cardOffsetFactor * (count - i);
                 mTmpContainerRect.bottom = parentBottom;
 
-                Gravity.apply(lp.gravity, width, height, mTmpContainerRect, mTmpChildRect);
-
-                child.layout(mTmpChildRect.left, mTmpChildRect.top,
-                        mTmpChildRect.right, mTmpChildRect.bottom);
+                child.layout(mTmpContainerRect.left, mTmpContainerRect.top,
+                        mTmpContainerRect.right, mTmpContainerRect.bottom);
             }
         }
     }
@@ -190,8 +180,6 @@ public class CardLayout extends ViewGroup {
      * Class holding layout parameters
      */
     public static class LayoutParams extends MarginLayoutParams {
-        public int gravity = Gravity.TOP | Gravity.START;
-
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
         }
@@ -214,23 +202,6 @@ public class CardLayout extends ViewGroup {
     public boolean onInterceptTouchEvent(MotionEvent event) {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            System.out.println("-----------------------");
-            System.out.println(mBoxHeaderPosition);
-            System.out.println(cardOffsetFactor);
-            System.out.println(event.getY());
-            int count = getChildCount();
-            /*int index = count - 1;
-
-            for (int i = 0; i < count; i++) {
-                View child = getChildAt(i);
-                int[] location = new int[2];
-                child.getLocationInWindow(location);
-
-                if(event.getY() < location[1]) {
-                    index = i;
-                    break;
-                }
-            }*/
 
             int index = (int)((event.getY() - mBoxHeaderPosition) / (cardOffsetFactor*2));
 
