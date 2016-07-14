@@ -1,9 +1,6 @@
 package com.distopia.everewidgets;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -12,28 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Represents a layout that arranges its child views and some special information, like an icon, in a card like manner
+ * Represents a layout that arranges its child views in card box like manner
  */
 @RemoteViews.RemoteView
 public class CardLayout extends ViewGroup {
-    private Paint mBoxPaint;
-    private Paint mTextPaint;
-
-    private int mShownChild = 0;
-    private int mCardHeaderSize = 0;
-    private int mCardHeaderPosition = 0;
-
     private Rect mTmpContainerRect = new Rect();
     private Rect mTmpChildRect = new Rect();
-
-    private Rect mTmpBitmapRect = new Rect();
-    private Rect mTextBounds = new Rect();
-
-    private List<CardDefinition> mCardDefinitions;
+    private int cardOffsetFactor = 0;
+    private int mBoxHeaderSize = 0;
+    private int mBoxHeaderPosition = 0;
 
     /**
      * Creates a new card layout
@@ -69,36 +54,7 @@ public class CardLayout extends ViewGroup {
      * Initialize anything needed
      */
     private void init() {
-        mCardDefinitions = new ArrayList<>();
 
-        mBoxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBoxPaint.setColor(Color.argb(255,122,0,0));
-        mBoxPaint.setStyle(Paint.Style.FILL);
-
-        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setColor(Color.argb(255,0,0,0));
-        mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-    }
-
-    /**
-     * Adds a card with the given definition
-     * @param card
-     */
-    public void addCard(CardDefinition card)
-    {
-        this.addView(card.getContent());
-        mCardDefinitions.add(card);
-    }
-
-    /**
-     * Removes the card with the given definition
-     * @param card
-     */
-    public void removeCard(CardDefinition card)
-    {
-        this.removeView(card.getContent());
-        mCardDefinitions.remove(card);
     }
 
     /**
@@ -127,7 +83,7 @@ public class CardLayout extends ViewGroup {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, -mCardHeaderSize);
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, -mBoxHeaderSize);
 
                 LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
@@ -157,15 +113,17 @@ public class CardLayout extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int count = getChildCount();
 
-        mCardHeaderSize = ((top - bottom) / 10) * mCardDefinitions.size();
-        mCardHeaderPosition = top;
+        if (mBoxHeaderSize == 0) {
+            mBoxHeaderSize = Math.abs((top - bottom) / 10);
+            cardOffsetFactor = mBoxHeaderSize / count;
+            mBoxHeaderPosition = top;
+        }
 
         int middleLeft = getPaddingLeft();
         int middleRight = right - left - getPaddingRight();
 
 
-        int parentTop = getPaddingTop();
-        int parentBottom = bottom - top - getPaddingBottom();
+        int parentBottom = bottom - top;
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
@@ -175,11 +133,11 @@ public class CardLayout extends ViewGroup {
                 int width = child.getMeasuredWidth();
                 int height = child.getMeasuredHeight();
 
-                mTmpContainerRect.left = middleLeft + lp.leftMargin;
-                mTmpContainerRect.right = middleRight - lp.rightMargin;
+                mTmpContainerRect.left = middleLeft;
+                mTmpContainerRect.right = middleRight;
 
-                mTmpContainerRect.top = parentTop + lp.topMargin - mCardHeaderSize;
-                mTmpContainerRect.bottom = parentBottom - lp.bottomMargin;
+                mTmpContainerRect.top = mBoxHeaderSize - cardOffsetFactor * (count - i);
+                mTmpContainerRect.bottom = parentBottom;
 
                 Gravity.apply(lp.gravity, width, height, mTmpContainerRect, mTmpChildRect);
 
@@ -248,59 +206,38 @@ public class CardLayout extends ViewGroup {
     }
 
     /**
-     * Standard draw callback
-     * @param canvas
-     */
-    @Override
-    protected void dispatchDraw (Canvas canvas) {
-        int count = getChildCount();
-        int shrinkFactor = ((mTmpContainerRect.right - mTmpContainerRect.left) / 30);
-
-        for (int i = 0; i < count; i++) {
-            getChildAt(i).setVisibility(GONE);
-            int childId = (mShownChild + i) % count;
-
-            mBoxPaint.setColor(mCardDefinitions.get(childId).getBackgroundColor());
-            canvas.drawRect(mTmpContainerRect.left + (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + (i + 1) * (mCardHeaderSize / count), mTmpContainerRect.right - (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count), mBoxPaint);
-
-            mTmpBitmapRect.left = mTmpContainerRect.left + (shrinkFactor * i);
-            mTmpBitmapRect.top = mCardHeaderPosition - mCardHeaderSize + (i + 1) * (mCardHeaderSize / count);
-            mTmpBitmapRect.bottom = mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count);
-            mTmpBitmapRect.right = mTmpBitmapRect.left + Math.abs(mTmpBitmapRect.top - mTmpBitmapRect.bottom);
-            canvas.drawBitmap(mCardDefinitions.get(childId).getIcon(), null, mTmpBitmapRect, mBoxPaint);
-            mBoxPaint.setColor(Color.BLACK);
-
-            mTextPaint.setTextSize(Math.abs(mCardHeaderSize / count));
-            mTextPaint.getTextBounds(mCardDefinitions.get(childId).getHeader(), 0, mCardDefinitions.get(childId).getHeader().length(), mTextBounds);
-            canvas.drawText(mCardDefinitions.get(childId).getHeader(), mTmpBitmapRect.right, (mTmpBitmapRect.top+ mTmpBitmapRect.bottom)/2 - mTextBounds.exactCenterY(), mTextPaint);
-        }
-
-        getChildAt(mShownChild).setVisibility(VISIBLE);
-        mBoxPaint.setColor(mCardDefinitions.get(mShownChild).getBackgroundColor());
-        canvas.drawRect(mTmpContainerRect.left, mCardHeaderPosition - mCardHeaderSize, mTmpContainerRect.right, mTmpContainerRect.bottom, mBoxPaint);
-
-        super.dispatchDraw(canvas);
-    }
-
-    /**
      * Standard touch event callback
      * @param event
      * @return
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
+
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            System.out.println("-----------------------");
+            System.out.println(mBoxHeaderPosition);
+            System.out.println(cardOffsetFactor);
+            System.out.println(event.getY());
+            int count = getChildCount();
+            /*int index = count - 1;
 
-            if (event.getY() < mCardHeaderPosition - mCardHeaderSize) {
-                int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = getChildAt(i);
+                int[] location = new int[2];
+                child.getLocationInWindow(location);
 
-                int index = (count-1) - (int)((event.getY() - mCardHeaderPosition)/Math.abs(mCardHeaderSize/count));
+                if(event.getY() < location[1]) {
+                    index = i;
+                    break;
+                }
+            }*/
 
-                mShownChild = (mShownChild + index) % count;
+            int index = (int)((event.getY() - mBoxHeaderPosition) / (cardOffsetFactor*2));
 
-                return true;
-            }
-
+            System.out.println(index);
+            bringChildToFront(getChildAt(index));
+            super.requestLayout();
+            super.invalidate();
             return false;
         }
 

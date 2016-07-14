@@ -1,118 +1,98 @@
-package com.distopia.everemote.devices.widgets;
+package com.distopia.everewidgets;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
-import com.distopia.everewidgets.CardDefinition;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
+/**
+ * Represents a layout that arranges its child views and some special information, like an icon, in a card like manner
+ */
 @RemoteViews.RemoteView
-public class CardLayout extends ViewGroup {
+public class CardView extends ViewGroup {
     private Paint mBoxPaint;
     private Paint mTextPaint;
 
-    private int shownChild = 0;
     private int mCardHeaderSize = 0;
     private int mCardHeaderPosition = 0;
 
     private Rect mTmpContainerRect = new Rect();
     private Rect mTmpChildRect = new Rect();
 
-    private List<CardDefinition> cardDefinitions;
+    private Rect mTextBounds = new Rect();
+    private Rect mCardBounds = new Rect();
 
-    public CardLayout(Context context) {
+    private Drawable mIcon;
+    private int mBackgroundColor;
+    private String mHeader;
 
+    /**
+     * Creates a new card view
+     * @param context The views context
+     */
+    public CardView(Context context) {
         super(context);
         init();
     }
 
-    public CardLayout(Context context, AttributeSet attrs) {
+    /**
+     * Creates a new card view
+     * @param context The views context
+     * @param attrs Attributes from the XML file
+     */
+    public CardView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CardView, 0, 0);
+
+        try {
+            mHeader = a.getString(R.styleable.CardView_headerText);
+            mBackgroundColor = a.getColor(R.styleable.CardView_colorBackground, 0);
+            mIcon = a.getDrawable(R.styleable.CardView_iconDrawable);
+        } finally {
+            a.recycle();
+        }
+
+
         init();
     }
 
-    public CardLayout(Context context, AttributeSet attrs, int defStyle) {
+    /**
+     * Creates a new card view
+     * @param context The views context
+     * @param attrs Attributes from the XML file
+     * @param defStyle Style information
+     */
+    public CardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CardView, 0, 0);
+
+        try {
+            mHeader = a.getString(R.styleable.CardView_headerText);
+            mBackgroundColor = a.getColor(R.styleable.CardView_colorBackground, 0);
+            mIcon = a.getDrawable(R.styleable.CardView_iconDrawable);
+        } finally {
+            a.recycle();
+        }
+
         init();
     }
 
     /**
-     * Prohibit from adding View the normal way
+     * Initialize anything needed
      */
-    @Override
-    public void addView(View child, ViewGroup.LayoutParams params)
-    {
-        return;
-    }
-
-    /**
-     * Prohibit from adding View the normal way
-     */
-    @Override
-    public void addView(View child, int index)
-    {
-        return;
-    }
-
-    /**
-     * Prohibit from adding View the normal way
-     */
-    @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params)
-    {
-        return;
-    }
-
-    /**
-     * Prohibit from adding View the normal way
-     */
-    @Override
-    public void addView(View child)
-    {
-        return;
-    }
-
-    /**
-     * Prohibit from adding View the normal way
-     */
-    @Override
-    public void addView(View child, int width, int height)
-    {
-        return;
-    }
-
-    public void addCard(CardDefinition card)
-    {
-        cardDefinitions.add(card);
-    }
-
-    public void removeCard(CardDefinition card)
-    {
-        cardDefinitions.remove(card);
-    }
-
-    public void removeCardAt(int index)
-    {
-        cardDefinitions.remove(index);
-    }
-
     private void init() {
-        cardDefinitions = new ArrayList<>();
-
         mBoxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBoxPaint.setColor(Color.argb(255,122,0,0));
+        mBoxPaint.setColor(mBackgroundColor);
         mBoxPaint.setStyle(Paint.Style.FILL);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -121,11 +101,20 @@ public class CardLayout extends ViewGroup {
         mTextPaint.setTextAlign(Paint.Align.LEFT);
     }
 
+    /**
+     * No touch delay for the children in this layout
+     * @return
+     */
     @Override
     public boolean shouldDelayChildPressedState() {
         return false;
     }
 
+    /**
+     * Standard measurement callback
+     * @param widthMeasureSpec
+     * @param heightMeasureSpec
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
@@ -138,7 +127,7 @@ public class CardLayout extends ViewGroup {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, mCardHeaderSize);
 
                 LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
@@ -156,12 +145,23 @@ public class CardLayout extends ViewGroup {
                         childState << MEASURED_HEIGHT_STATE_SHIFT));
     }
 
+    /**
+     * Standard layout callback
+     * @param changed
+     * @param left
+     * @param top
+     * @param right
+     * @param bottom
+     */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int count = getChildCount();
 
-        mCardHeaderSize = (top - bottom) / 8;
-        mCardHeaderPosition = top;
+        if (mCardHeaderSize == 0) {
+            mCardHeaderSize = Math.abs((top - bottom) / 8);
+            mCardHeaderPosition = top;
+            requestLayout();
+        }
 
         int middleLeft = getPaddingLeft();
         int middleRight = right - left - getPaddingRight();
@@ -181,7 +181,7 @@ public class CardLayout extends ViewGroup {
                 mTmpContainerRect.left = middleLeft + lp.leftMargin;
                 mTmpContainerRect.right = middleRight - lp.rightMargin;
 
-                mTmpContainerRect.top = parentTop + lp.topMargin - mCardHeaderSize;
+                mTmpContainerRect.top = parentTop + lp.topMargin + mCardHeaderSize;
                 mTmpContainerRect.bottom = parentBottom - lp.bottomMargin;
 
                 Gravity.apply(lp.gravity, width, height, mTmpContainerRect, mTmpChildRect);
@@ -190,28 +190,55 @@ public class CardLayout extends ViewGroup {
                         mTmpChildRect.right, mTmpChildRect.bottom);
             }
         }
+
+        mCardBounds.top = top;
+        mCardBounds.bottom = mTmpContainerRect.bottom;
+        mCardBounds.left = mTmpContainerRect.left;
+        mCardBounds.right = mTmpContainerRect.right;
     }
 
+    /**
+     * Needed for the generation of layout parameters for the children
+     * @param attrs
+     * @return
+     */
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new CardLayout.LayoutParams(getContext(), attrs);
+        return new CardView.LayoutParams(getContext(), attrs);
     }
 
+    /**
+     * Needed for the generation of layout parameters for the children
+     * @return
+     */
     @Override
     protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     }
 
+    /**
+     * Needed for the generation of layout parameters for the children
+     * @param p
+     * @return
+     */
     @Override
     protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new LayoutParams(p);
     }
 
+    /**
+     * Checks if layout parameter are sufficient for card layout
+     * @param p
+     * @return
+     */
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
         return p instanceof LayoutParams;
     }
 
+    /**
+     * Class holding layout parameters
+     */
     public static class LayoutParams extends MarginLayoutParams {
         public int gravity = Gravity.TOP | Gravity.START;
 
@@ -228,46 +255,34 @@ public class CardLayout extends ViewGroup {
         }
     }
 
+    /**
+     * Standard draw callback
+     * @param canvas
+     */
     @Override
     protected void dispatchDraw (Canvas canvas) {
-        int count = getChildCount();
-        int shrinkFactor = (mTmpContainerRect.right - mTmpContainerRect.left) / (3*count);
-
-        for (int i = 0; i < count; i++) {
-            canvas.drawRect(mTmpContainerRect.left + (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + (i + 1) * (mCardHeaderSize / count), mTmpContainerRect.right - (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count), mBoxPaint);
-
-            String text = Integer.toString((shownChild + i) % count);
-            mTextPaint.setTextSize(Math.abs(mCardHeaderSize / count));
-            canvas.drawText(text, mTmpContainerRect.left + (shrinkFactor * i), mCardHeaderPosition - mCardHeaderSize + i * (mCardHeaderSize / count), mTextPaint);
+        if(getChildCount() == 0)
+        {
+            return;
         }
 
+        // Draw card background
+        canvas.drawRect(mCardBounds.left, mCardBounds.top, mCardBounds.right, mCardBounds.bottom, mBoxPaint);
+
+        // Draw icon in top left corner
+        if (mIcon != null) {
+            mIcon.setBounds(mCardBounds.left, mCardBounds.top, mCardBounds.left + mCardHeaderSize, mCardBounds.top + mCardHeaderSize);
+            mIcon.draw(canvas);
+        }
+
+        // Draw header text
+        if (mHeader != null) {
+            mTextPaint.setTextSize(mCardHeaderSize);
+            mTextPaint.getTextBounds(mHeader, 0, mHeader.length(), mTextBounds);
+            canvas.drawText(mHeader, mCardBounds.left + mCardHeaderSize, mCardBounds.top + (mCardHeaderSize / 2) - mTextBounds.exactCenterY(), mTextPaint);
+        }
+
+        // Draw child
         super.dispatchDraw(canvas);
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-            if (event.getY() < mTmpContainerRect.top - mCardHeaderSize) {
-                int count = getChildCount();
-
-                shownChild = (shownChild + 1) % count;
-
-                for (int i = 0; i < count; i++) {
-                    View child = getChildAt(i);
-                    if (i == shownChild) {
-                        child.setVisibility(VISIBLE);
-                    } else {
-                        child.setVisibility(GONE);
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        return false;
     }
 }
