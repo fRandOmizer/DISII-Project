@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 CardView tvChannelsCard = (CardView) findViewById(R.id.tv_channels_card);
                 CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
                 CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
-                CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
+                //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
                 CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
                 if(tvChannelsCard != null) {
                     tvChannelsCard.setVisibility(View.GONE);
@@ -107,9 +107,10 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 if(lightOnOffCard != null) {
                     lightOnOffCard.setVisibility(View.GONE);
                 }
-                if(shutterCard != null) {
+                /*if(shutterCard != null) {
                     shutterCard.setVisibility(View.GONE);
-                }if(speakerVolumeCard != null) {
+                }*/
+                if(speakerVolumeCard != null) {
                     speakerVolumeCard.setVisibility(View.GONE);
                 }
                 for(Device deviceInRange : curDevices) {
@@ -118,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                         tvVolumeCard.setVisibility(View.VISIBLE);
                     } else if(deviceInRange instanceof Light && lightOnOffCard != null) {
                         lightOnOffCard.setVisibility(View.VISIBLE);
-                    } else if(deviceInRange instanceof Shutter && shutterCard != null) {
+                    } /*else if(deviceInRange instanceof Shutter && shutterCard != null) {
                         shutterCard.setVisibility(View.VISIBLE);
-                    } else if(deviceInRange instanceof Speaker && speakerVolumeCard != null) {
+                    }*/ else if(deviceInRange instanceof Speaker && speakerVolumeCard != null) {
                         speakerVolumeCard.setVisibility(View.VISIBLE);
                     }
                 }

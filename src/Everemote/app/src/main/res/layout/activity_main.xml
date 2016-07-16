@@ -55,10 +55,10 @@
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:headerText="Speaker Volume"
             app:colorBackground="@color/card_speaker"
             app:iconDrawable="@mipmap/ic_launcher"
-            android:visibility="gone"
             android:id="@+id/speaker_volume_card">
 
             <com.distopia.everewidgets.VolumeView
@@ -71,10 +71,10 @@
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:headerText="Lights"
             app:colorBackground="@color/card_light"
             app:iconDrawable="@mipmap/ic_launcher"
-            android:visibility="gone"
             android:id="@+id/lights_onoff_card">
 
             <ImageButton
@@ -92,10 +92,10 @@
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:headerText="PC"
             app:colorBackground="@color/card_pc"
             app:iconDrawable="@mipmap/ic_launcher"
-            android:visibility="gone"
             android:id="@+id/pc_onoff_card">
 
             <ImageButton
@@ -107,13 +107,12 @@
 
         </com.distopia.everewidgets.CardView>
 
-        <com.distopia.everewidgets.CardView
+        <!--<com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Shutters"
             app:colorBackground="@color/card_shutter"
             app:iconDrawable="@mipmap/ic_launcher"
-            android:visibility="gone"
             android:id="@+id/shutter_card">
 
             <com.distopia.everewidgets.AbsoluteRegulatorView
@@ -131,7 +130,7 @@
                 android:layout_gravity="center"
                 android:id="@+id/shutter" />
 
-        </com.distopia.everewidgets.CardView>
+        </com.distopia.everewidgets.CardView>-->
 
     </com.distopia.everewidgets.CardLayout>
 

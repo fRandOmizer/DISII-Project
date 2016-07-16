@@ -20,6 +20,7 @@ public class CardLayout extends ViewGroup {
     private int mBoxHeaderPosition = 0;
     private float mlastDownY = 0;
     private boolean mMovementStarted = false;
+    private int lastCount = 0;
 
     /**
      * Creates a new card layout
@@ -74,7 +75,6 @@ public class CardLayout extends ViewGroup {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         int count = getChildCount();
 
         int maxHeight = 0;
@@ -116,7 +116,7 @@ public class CardLayout extends ViewGroup {
 
 
         mBoxHeaderSize = Math.abs((top - bottom) / 10);
-        cardOffsetFactor = mBoxHeaderSize / count;
+        cardOffsetFactor = mBoxHeaderSize / (count == 0 ? 1 : count);
         mBoxHeaderPosition = top;
 
         int middleRight = right - left ;
@@ -249,6 +249,7 @@ public class CardLayout extends ViewGroup {
         else if (event.getAction() == MotionEvent.ACTION_UP) {
             if (!mMovementStarted) {
                 int index = (int)((event.getY() - mBoxHeaderPosition) / ((Math.abs(cardOffsetManualChange) + Math.abs(cardOffsetFactor))*2));
+                cardOffsetManualChange = 0;
                 bringChildToFront(getChildAt(index));
                 invalidate();
                 requestLayout();
@@ -256,5 +257,56 @@ public class CardLayout extends ViewGroup {
         }
 
         return false;
+    }
+
+    /**
+     * Only children that are visible count
+     * @return
+     */
+    @Override
+    public int getChildCount () {
+        int count = super.getChildCount();
+        int countWithoutInvisible = 0;
+
+        for (int i = 0; i < count; i++) {
+            final View child = super.getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                countWithoutInvisible++;
+            }
+        }
+
+        // cards changed, reset movement
+        if (lastCount != countWithoutInvisible) {
+            lastCount = countWithoutInvisible;
+            cardOffsetManualChange = 0;
+        }
+
+        return countWithoutInvisible;
+    }
+
+    /**
+     * Only get visible children
+     * @param index
+     * @return
+     */
+    @Override
+    public View getChildAt (int index) {
+        int count = super.getChildCount();
+
+        for (int i = 0; i < count; i++) {
+            View child = super.getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                if (index == 0)
+                {
+                    return child;
+                }
+                else
+                {
+                    index--;
+                }
+            }
+        }
+
+        return super.getChildAt(0);
     }
 }
