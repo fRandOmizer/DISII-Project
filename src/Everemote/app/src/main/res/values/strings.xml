@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Everemote</string>
+    <string name="lightbulb">Lightbulb</string>
+    <string name="pc">PC</string>
 </resources>

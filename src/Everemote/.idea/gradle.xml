@@ -7,16 +7,16 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="/mnt/windows/foxnbk/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote" />
-            <option value="/mnt/windows/foxnbk/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app" />
-            <option value="/mnt/windows/foxnbk/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets" />
           </set>
         </option>
         <option name="myModules">
           <set>
-            <option value="/mnt/windows/foxnbk/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote" />
-            <option value="/mnt/windows/foxnbk/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app" />
-            <option value="/mnt/windows/foxnbk/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/app" />
+            <option value="$USER_HOME$/Dropbox/Dokumente/Studium/SS-16/DIS2/Project/src/Everemote/everewidgets" />
           </set>
         </option>
       </GradleProjectSettings>
