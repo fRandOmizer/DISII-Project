@@ -15,8 +15,11 @@ import android.widget.RemoteViews;
 public class CardLayout extends ViewGroup {
     private Rect mTmpContainerRect = new Rect();
     private int cardOffsetFactor = 0;
+    private int cardOffsetManualChange = 0;
     private int mBoxHeaderSize = 0;
     private int mBoxHeaderPosition = 0;
+    private float mlastDownY = 0;
+    private boolean mMovementStarted = false;
 
     /**
      * Creates a new card layout
@@ -80,9 +83,8 @@ public class CardLayout extends ViewGroup {
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-
             if (child.getVisibility() != GONE) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, -mBoxHeaderSize);
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, mBoxHeaderSize);
 
                 LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
@@ -117,19 +119,18 @@ public class CardLayout extends ViewGroup {
         cardOffsetFactor = mBoxHeaderSize / count;
         mBoxHeaderPosition = top;
 
-        int middleLeft = getPaddingLeft();
-        int middleRight = right - left - getPaddingRight();
+        int middleRight = right - left ;
 
         int parentBottom = bottom - top;
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
 
             if (child.getVisibility() != GONE) {
-                mTmpContainerRect.left = middleLeft;
+                mTmpContainerRect.left = 0;
                 mTmpContainerRect.right = middleRight;
 
-                mTmpContainerRect.top = mBoxHeaderSize - cardOffsetFactor * (count - i);
-                mTmpContainerRect.bottom = parentBottom;
+                mTmpContainerRect.top = top + (mBoxHeaderSize - cardOffsetFactor * (count - i)) - cardOffsetManualChange * i;
+                mTmpContainerRect.bottom = parentBottom - cardOffsetFactor * (count - i) - cardOffsetManualChange * i;
 
                 child.layout(mTmpContainerRect.left, mTmpContainerRect.top,
                         mTmpContainerRect.right, mTmpContainerRect.bottom);
@@ -153,7 +154,7 @@ public class CardLayout extends ViewGroup {
      */
     @Override
     protected LayoutParams generateDefaultLayoutParams() {
-        return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
     /**
@@ -200,16 +201,58 @@ public class CardLayout extends ViewGroup {
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int count = getChildCount();
+            mlastDownY = event.getY();
+            mMovementStarted = false;
 
-            int index = (int)((event.getY() - mBoxHeaderPosition) / (cardOffsetFactor*2));
+            if (event.getY() < mBoxHeaderSize + mBoxHeaderPosition + Math.abs(cardOffsetFactor * count) + Math.abs(cardOffsetManualChange * count))
+            {
+                return true;
+            }
+        }
 
-            System.out.println(index);
-            bringChildToFront(getChildAt(index));
-            super.requestLayout();
-            super.invalidate();
-            return false;
+        return false;
+    }
+
+    /**
+     * Standard touch event callback
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int count = getChildCount();
+            mlastDownY = event.getY();
+            mMovementStarted = false;
+
+            if (event.getY() < mBoxHeaderSize + mBoxHeaderPosition + Math.abs(cardOffsetFactor * count) + Math.abs(cardOffsetManualChange * count))
+            {
+                return true;
+            }
+        }
+        else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (Math.abs(event.getY() - mlastDownY) > Math.abs(cardOffsetFactor/8)) {
+                mMovementStarted = true;
+            }
+
+            if (mMovementStarted) {
+                cardOffsetManualChange += (int)(mlastDownY - event.getY());
+                cardOffsetManualChange = Math.min(cardOffsetManualChange, 0);
+                invalidate();
+                requestLayout();
+            }
+
+            mlastDownY = event.getY();
+        }
+        else if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (!mMovementStarted) {
+                int index = (int)((event.getY() - mBoxHeaderPosition) / ((Math.abs(cardOffsetManualChange) + Math.abs(cardOffsetFactor))*2));
+                bringChildToFront(getChildAt(index));
+                invalidate();
+                requestLayout();
+            }
         }
 
         return false;

@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
@@ -117,29 +118,19 @@ public class CardView extends ViewGroup {
 
         int count = getChildCount();
 
-        int maxHeight = 0;
-        int maxWidth = 0;
         int childState = 0;
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
+            child.requestLayout();
+
             if (child.getVisibility() != GONE) {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, mCardHeaderSize);
-
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-
-                maxWidth = Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                maxHeight = Math.max(maxHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 childState = combineMeasuredStates(childState, child.getMeasuredState());
             }
         }
 
-        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-
-        setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
-                resolveSizeAndState(maxHeight, heightMeasureSpec,
-                        childState << MEASURED_HEIGHT_STATE_SHIFT));
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
     }
 
     /**
@@ -160,22 +151,19 @@ public class CardView extends ViewGroup {
         }
 
         int middleLeft = getPaddingLeft();
-        int middleRight = right - left - getPaddingRight();
+        int middleRight = right - left;
 
 
-        int parentTop = getPaddingTop();
-        int parentBottom = bottom - top - getPaddingBottom();
+        int parentBottom = bottom - top;
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                mTmpContainerRect.left = middleLeft;
+                mTmpContainerRect.right = middleRight;
 
-                mTmpContainerRect.left = middleLeft + lp.leftMargin;
-                mTmpContainerRect.right = middleRight - lp.rightMargin;
-
-                mTmpContainerRect.top = parentTop + lp.topMargin + mCardHeaderSize;
-                mTmpContainerRect.bottom = parentBottom - lp.bottomMargin;
+                mTmpContainerRect.top = top + mCardHeaderSize;
+                mTmpContainerRect.bottom = parentBottom;
 
                 child.layout(mTmpContainerRect.left, mTmpContainerRect.top,
                         mTmpContainerRect.right, mTmpContainerRect.bottom);
