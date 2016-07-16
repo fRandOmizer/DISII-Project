@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.distopia.everemote.devices.Device;
 import com.distopia.everemote.devices.Light;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * Shutter.
      */
-    private Shutter shutter = new Shutter(300, 50);
+    private Shutter shutter = new Shutter(140, 190);
 
     /**
      * Speaker.
