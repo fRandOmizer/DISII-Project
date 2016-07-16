@@ -2,6 +2,7 @@ package com.distopia.everewidgets;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ public class CardLayout extends ViewGroup {
     private float mlastDownY = 0;
     private boolean mMovementStarted = false;
     private int lastCount = 0;
+    private Vibrator vibrator;
 
     /**
      * Creates a new card layout
@@ -56,7 +58,7 @@ public class CardLayout extends ViewGroup {
      * Initialize anything needed
      */
     private void init() {
-
+        vibrator = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     /**
@@ -279,6 +281,18 @@ public class CardLayout extends ViewGroup {
         if (lastCount != countWithoutInvisible) {
             lastCount = countWithoutInvisible;
             cardOffsetManualChange = 0;
+
+            // more than one card
+            if (countWithoutInvisible > 1) {
+
+                long[] pattern = new long[countWithoutInvisible*2];
+
+                for (int i = 0; i < pattern.length; i++) {
+                    pattern[i] = 100;
+                }
+
+                vibrator.vibrate(pattern, -1);
+            }
         }
 
         return countWithoutInvisible;
