@@ -149,22 +149,6 @@ public class AbsoluteRegulatorView extends View {
         currentPaint.setColor(currentValueColor);
         currentPaint.setStrokeWidth(indicatorLineSize);
 
-        // add images
-        width = 900;
-        height = 1400;
-        resizeImages(width, height);
-
-        ClipDrawable clippy;
-        clippy = new ClipDrawable(imageMax, Gravity.BOTTOM, 2);
-        clippy.setVisible(true, true);
-        clippy.setLevel(10000);
-
-        Drawable[] array = new Drawable[2];
-        array[0] = imageMin;
-        array[1] = clippy;
-        layer = new LayerDrawable(array);
-
-        // Update TextPaint and text measurements from attributes
         invalidateTextPaintAndMeasurements();
     }
 
@@ -328,6 +312,16 @@ public class AbsoluteRegulatorView extends View {
             imageMin.setGravity(Gravity.BOTTOM + Gravity.FILL);
             imageMax.setGravity(Gravity.BOTTOM + Gravity.FILL_HORIZONTAL);
         }
+
+        ClipDrawable clippy;
+        clippy = new ClipDrawable(imageMax, Gravity.BOTTOM, 2);
+        clippy.setVisible(true, true);
+        clippy.setLevel(10000);
+
+        Drawable[] array = new Drawable[2];
+        array[0] = imageMin;
+        array[1] = clippy;
+        layer = new LayerDrawable(array);
     }
 
     private float normalizeValue(float value) {
