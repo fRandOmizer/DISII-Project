@@ -7,6 +7,8 @@ import com.distopia.everemote.devices.controls.LightOnOffControlProxy;
  */
 public class Light extends Device {
 
+    private boolean on = false;
+
     private LightOnOffControlProxy onOffControl;
 
     public Light() {
@@ -27,5 +29,20 @@ public class Light extends Device {
 
     public LightOnOffControlProxy getOnOffControl() {
         return onOffControl;
+    }
+
+    /**
+     * Returns the current light state of the light.
+     * @return If true, then the light is on. False otherwise.
+     */
+    public boolean isOn() {
+        return on;
+    }
+
+    /**
+     * Toggles the state of the light.
+     */
+    public void toggleLight() {
+        this.on = !this.on;
     }
 }

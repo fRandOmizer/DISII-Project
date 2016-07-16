@@ -22,7 +22,7 @@
             android:id="@+id/tv_channels_card"
             android:visibility="gone"
             app:headerText="Channels"
-            app:colorBackground="@color/card"
+            app:colorBackground="@color/card_tv"
             app:iconDrawable="@mipmap/ic_launcher">
 
             <com.distopia.everewidgets.BannerSliderView
@@ -42,7 +42,7 @@
             android:id="@+id/tv_volume_card"
             android:visibility="gone"
             app:headerText="Sound"
-            app:colorBackground="@color/card"
+            app:colorBackground="@color/card_tv"
             app:iconDrawable="@mipmap/ic_launcher">
 
             <com.distopia.everewidgets.VolumeView
@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Speaker Volume"
-            app:colorBackground="@color/card"
+            app:colorBackground="@color/card_speaker"
             app:iconDrawable="@mipmap/ic_launcher"
             android:visibility="gone"
             android:id="@+id/speaker_volume_card">
@@ -72,17 +72,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Lights"
-            app:colorBackground="@color/card"
+            app:colorBackground="@color/card_light"
             app:iconDrawable="@mipmap/ic_launcher"
             android:visibility="gone"
             android:id="@+id/lights_onoff_card">
 
             <ImageButton
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:src="@drawable/lightbulb_off"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/lightbulb"
-                android:id="@+id/lights_onoff" />
+                android:scaleType="fitCenter"
+                android:id="@+id/lights_onoff"
+                android:onClick="toggleLights"/>
 
         </com.distopia.everewidgets.CardView>
 
@@ -90,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="PC"
-            app:colorBackground="@color/card"
+            app:colorBackground="@color/card_pc"
             app:iconDrawable="@mipmap/ic_launcher"
             android:visibility="gone"
             android:id="@+id/pc_onoff_card">
@@ -108,7 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Shutters"
-            app:colorBackground="@color/card"
+            app:colorBackground="@color/card_shutter"
             app:iconDrawable="@mipmap/ic_launcher"
             android:visibility="gone"
             android:id="@+id/shutter_card">

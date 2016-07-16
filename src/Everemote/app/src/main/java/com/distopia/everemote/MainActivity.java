@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.distopia.everemote.devices.Device;
 import com.distopia.everemote.devices.Light;
@@ -127,4 +129,19 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         });
     }
 
+    /**
+     * Toggles the lights. Is called in case the user pressed on the light button.
+     * @param view The view that issued this call.
+     */
+    public void toggleLights(View view) {
+        ImageButton lightButton = ((ImageButton) findViewById(R.id.lights_onoff));
+        if(lightButton != null) {
+            if (light.isOn()) {
+                lightButton.setImageResource(R.drawable.lightbulb_on);
+            } else {
+                lightButton.setImageResource(R.drawable.lightbulb_off);
+            }
+        }
+        light.toggleLight();
+    }
 }

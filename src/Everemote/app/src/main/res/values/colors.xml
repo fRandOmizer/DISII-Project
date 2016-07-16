@@ -3,5 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="card">#d6d6d6</color>
+    <color name="card_tv">#92ff95</color>
+    <color name="card_light">#a1d8f5</color>
+    <color name="card_shutter">#fd9d9d</color>
+    <color name="card_speaker">#d8ff76</color>
+    <color name="card_pc">#cfcfcf</color>
 </resources>
