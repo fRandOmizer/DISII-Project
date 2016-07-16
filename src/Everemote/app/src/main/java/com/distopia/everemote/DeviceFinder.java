@@ -144,9 +144,6 @@ public class DeviceFinder implements SensorEventListener {
             deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation )[0]) + 360) % 360;
             // Checks if we even need to consider an update.
             if(prevDeviceAngle != deviceAngle) {
-                for (DevicesChangeNotifyable subscriber : this.subscribers) {
-                    subscriber.setAngle(deviceAngle);
-                }
                 // Gathers the new device list.
                 newDevices.clear();
                 for (Device device : this.devices) {

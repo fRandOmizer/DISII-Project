@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.distopia.everemote.devices.Device;
 import com.distopia.everemote.devices.Light;
@@ -128,16 +127,4 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         });
     }
 
-    @Override
-    public void setAngle(final int angle) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView text = (TextView) findViewById(R.id.text);
-                if(text != null) {
-                    text.setText("Angle: " + angle);
-                }
-            }
-        });
-    }
 }
