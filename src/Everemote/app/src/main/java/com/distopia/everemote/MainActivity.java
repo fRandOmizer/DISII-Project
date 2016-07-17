@@ -115,14 +115,19 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 }
                 for(Device deviceInRange : curDevices) {
                     if(deviceInRange instanceof TV && tvChannelsCard != null && tvVolumeCard != null) {
-                        tvChannelsCard.setVisibility(View.VISIBLE);
                         tvVolumeCard.setVisibility(View.VISIBLE);
+                        tvVolumeCard.getParent().bringChildToFront(tvVolumeCard);
+                        tvChannelsCard.setVisibility(View.VISIBLE);
+                        tvChannelsCard.getParent().bringChildToFront(tvChannelsCard);
                     } else if(deviceInRange instanceof Light && lightOnOffCard != null) {
                         lightOnOffCard.setVisibility(View.VISIBLE);
+                        lightOnOffCard.getParent().bringChildToFront(lightOnOffCard);
                     } /*else if(deviceInRange instanceof Shutter && shutterCard != null) {
                         shutterCard.setVisibility(View.VISIBLE);
+                        shutterCard.getParent().bringChildToFront(shutterCard);
                     }*/ else if(deviceInRange instanceof Speaker && speakerVolumeCard != null) {
                         speakerVolumeCard.setVisibility(View.VISIBLE);
+                        speakerVolumeCard.getParent().bringChildToFront(speakerVolumeCard);
                     }
                 }
             }
