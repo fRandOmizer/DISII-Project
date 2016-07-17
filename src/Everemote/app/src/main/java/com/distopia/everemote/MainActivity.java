@@ -24,6 +24,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable {
     private static final String TAG = "MainActivity";
 
+    /**
+     * TCP Client Connection
+     */
+    private RaspiClient mTcpClient;
+
     DeviceFinder deviceFinder;
 
     private List<Device> allDevices = new ArrayList<>();
@@ -41,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * Light.
      */
-    private Light light = new Light(0, 50);
+    private Light light = new Light(0, 50, mTcpClient);
 
     /**
      * Shutter.
@@ -52,11 +57,6 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
      * Speaker.
      */
     private Speaker speaker = new Speaker(200, 250);
-
-    /**
-     * TCP Client Connection
-     */
-    private RaspiClient mTcpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,8 +158,14 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         if(lightButton != null) {
             if (light.isOn()) {
                 lightButton.setImageResource(R.drawable.lightbulb_on);
+                if (mTcpClient != null) {
+                    mTcpClient.sendMessage("LightsOn");
+                }
             } else {
                 lightButton.setImageResource(R.drawable.lightbulb_off);
+                if (mTcpClient != null) {
+                    mTcpClient.sendMessage("LightsOff");
+                }
             }
         }
         light.toggleLight();

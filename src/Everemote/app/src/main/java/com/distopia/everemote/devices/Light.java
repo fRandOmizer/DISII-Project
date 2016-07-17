@@ -1,6 +1,7 @@
 package com.distopia.everemote.devices;
 
 import com.distopia.everemote.devices.controls.LightOnOffControlProxy;
+import com.distopia.everemote.network.RaspiClient;
 
 /**
  * Created by chris on 11.07.2016.
@@ -11,9 +12,10 @@ public class Light extends Device {
 
     private LightOnOffControlProxy onOffControl;
 
-    public Light() {
-        onOffControl = new LightOnOffControlProxy();
+    public Light(RaspiClient tcpClient) {
+        onOffControl = new LightOnOffControlProxy(tcpClient);
         addControl(onOffControl);
+
     }
 
     /**
@@ -21,9 +23,9 @@ public class Light extends Device {
      * @param angleBeginning The angle in which the beginning of the light is located.
      * @param angleEnd The angle in which the end of the light is located.
      */
-    public Light(int angleBeginning, int angleEnd) {
+    public Light(int angleBeginning, int angleEnd, RaspiClient tcpClient) {
         super(angleBeginning, angleEnd);
-        onOffControl = new LightOnOffControlProxy();
+        onOffControl = new LightOnOffControlProxy(tcpClient);
         addControl(onOffControl);
     }
 
@@ -43,6 +45,13 @@ public class Light extends Device {
      * Toggles the state of the light.
      */
     public void toggleLight() {
+        if(this.on) {
+            this.onOffControl.turnOff();
+        }
+        else
+        {
+            this.onOffControl.turnOn();
+        }
         this.on = !this.on;
     }
 }
