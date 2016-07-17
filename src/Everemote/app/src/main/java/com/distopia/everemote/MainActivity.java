@@ -1,6 +1,7 @@
 package com.distopia.everemote;
 
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.distopia.everemote.devices.Shutter;
 import com.distopia.everemote.devices.Speaker;
 import com.distopia.everemote.devices.TV;
 import com.distopia.everemote.devices.controls.Channel;
+import com.distopia.everemote.network.RaspiClient;
 import com.distopia.everewidgets.BannerSliderView;
 import com.distopia.everewidgets.CardView;
 
@@ -51,10 +53,18 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
      */
     private Speaker speaker = new Speaker(200, 250);
 
+    /**
+     * TCP Client Connection
+     */
+    private RaspiClient mTcpClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // connect to the server
+        AsyncTask<String, String, RaspiClient> task = new connectTask().execute("");
 
         // Sets up all devices (hardcoded for now).
         this.allDevices.add(light);
@@ -84,6 +94,11 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     }
                 }
             });
+        }
+
+        //sends the message to the server
+        if (mTcpClient != null) {
+            mTcpClient.sendMessage("Connection Ok");
         }
     }
 
@@ -149,4 +164,37 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
         light.toggleLight();
     }
+
+    public class connectTask extends AsyncTask<String,String,RaspiClient> {
+
+        @Override
+        protected RaspiClient doInBackground(String... message) {
+
+            //we create a TCPClient object and
+            mTcpClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
+                @Override
+                //here the messageReceived method is implemented
+                public void messageReceived(String message) {
+                    //this method calls the onProgressUpdate
+                    publishProgress(message);
+                }
+            });
+            mTcpClient.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+
+            //in the arrayList we add the messaged received from server
+            // arrayList.add(values[0]);
+            // notify the adapter that the data set has changed. This means that new message received
+            // from server was added to the list
+            // mAdapter.notifyDataSetChanged();
+        }
+    }
+
 }
+
