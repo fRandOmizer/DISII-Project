@@ -1,10 +1,12 @@
 package IRTV;
 import java.io.OutputStream;
+
 import com.fazecast.jSerialComm.SerialPort;
 
 
 
-public class IRTV {
+public class IRTV 
+{
 	
 	public OutputStream output;
 	int volume;
@@ -16,7 +18,11 @@ public class IRTV {
 	channelcontrol channelc;
 
 	public IRTV()
-	{output = this.setupCOM();
+	{
+	output = this.setupCOM();
+	onoffc = new onoffcontrol (output);
+	volumec = new volumecontrol (output);
+	channelc = new channelcontrol (output);
 	 
 	volume = 10;
 	onoff= false;
@@ -32,7 +38,7 @@ public class IRTV {
 		// Find all available ports
         SerialPort[] computerPorts = SerialPort.getCommPorts();
 
-        // Select COM3
+        // Select COMPort
         SerialPort selectedPort = null;
 
         for (SerialPort p : computerPorts) 
@@ -45,7 +51,7 @@ public class IRTV {
             }
         }
 
-        // Try to open port, terminate execution if not possible
+        // Try to open port
         if (selectedPort == null) {
         	System.out.println("Failed to find port");
             return null;
@@ -62,7 +68,7 @@ public class IRTV {
         selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
         
         	OutputStream output = selectedPort.getOutputStream();   
-            System.out.println("ini complete");
+            System.out.println("Port ini complete");
             return output;
 		
 	}
