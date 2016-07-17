@@ -107,7 +107,7 @@
 
         </com.distopia.everewidgets.CardView>
 
-        <com.distopia.everewidgets.CardView
+        <!--<com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Shutters"
@@ -115,7 +115,7 @@
             app:iconDrawable="@mipmap/ic_launcher"
             android:id="@+id/shutter_card">
 
-            <!-- <com.distopia.everewidgets.AbsoluteRegulatorView
+            <com.distopia.everewidgets.AbsoluteRegulatorView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#ccc"
@@ -132,9 +132,9 @@
                 app:orientation="1"
                 app:indicatorTextSize="70"
                 android:layout_gravity="center"
-                android:id="@+id/shutter" /> -->
+                android:id="@+id/shutter" />
 
-        </com.distopia.everewidgets.CardView>
+        </com.distopia.everewidgets.CardView>-->
 
     </com.distopia.everewidgets.CardLayout>
 
