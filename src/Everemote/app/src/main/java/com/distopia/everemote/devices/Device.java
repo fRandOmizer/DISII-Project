@@ -1,5 +1,7 @@
 package com.distopia.everemote.devices;
 
+import android.util.Log;
+
 import com.distopia.everemote.devices.controls.ControlProxy;
 
 import java.util.ArrayList;

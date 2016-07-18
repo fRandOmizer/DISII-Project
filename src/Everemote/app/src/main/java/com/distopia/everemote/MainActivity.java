@@ -1,7 +1,11 @@
 package com.distopia.everemote;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +32,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable {
-    private static final String TAG = "MainActivity";
+    private static final String TAG               = "MainActivity";
+    private static final String TV_MIN_RANGE      = "20";
+    private static final String TV_MAX_RANGE      = "120";
+    private static final String LIGHT_MIN_RANGE   = "0";
+    private static final String LIGHT_MAX_RANGE   = "50";
+    private static final String SHUTTER_MIN_RANGE = "140";
+    private static final String SHUTTER_MAX_RANGE = "190";
+    private static final String SPEAKER_MIN_RANGE = "60";
+    private static final String SPEAKER_MAX_RANGE = "100";
+
+    SharedPreferences sharedPreferences;
+    OnSharedPreferenceChangeListener prefListener = new OnSharedPreferenceChangeListener() {
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if(sharedPreferences != null) {
+                if ("tv_min_range".equals(key)) {
+                    tv.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, TV_MIN_RANGE)));
+                } else if ("tv_max_range".equals(key)) {
+                    tv.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, TV_MAX_RANGE)));
+                } else if ("light_min_range".equals(key)) {
+                    light.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, LIGHT_MIN_RANGE)));
+                } else if ("light_max_range".equals(key)) {
+                    light.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, LIGHT_MAX_RANGE)));
+                } else if ("shutter_min_range".equals(key)) {
+                    shutter.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, SHUTTER_MIN_RANGE)));
+                } else if ("shutter_max_range".equals(key)) {
+                    shutter.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, SHUTTER_MAX_RANGE)));
+                } else if ("speaker_min_range".equals(key)) {
+                    speaker.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, SPEAKER_MIN_RANGE)));
+                } else if ("speaker_max_range".equals(key)) {
+                    speaker.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, SPEAKER_MAX_RANGE)));
+                }
+            }
+        }
+    };
 
     /**
      * TCP client connection.
@@ -46,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * TV.
      */
-    private TV tv = new TV(20, 120);
+    private TV tv = new TV(Integer.valueOf(TV_MIN_RANGE), Integer.valueOf(TV_MAX_RANGE));
     private int[] channelImages = {R.drawable.das_erste_s, R.drawable.zdf_s, R.drawable.rtl_s};
     private Channel[] channels = {new Channel("Das Erste", 1),
                                   new Channel("ZDF", 2),
@@ -55,17 +92,21 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * Light.
      */
-    private Light light = new Light(0, 50, tcpClient);
+    private Light light = new Light(Integer.valueOf(LIGHT_MIN_RANGE),
+                                    Integer.valueOf(LIGHT_MAX_RANGE),
+                                    tcpClient);
 
     /**
      * Shutter.
      */
-    private Shutter shutter = new Shutter(140, 190);
+    private Shutter shutter = new Shutter(Integer.valueOf(SHUTTER_MIN_RANGE),
+                                          Integer.valueOf(SHUTTER_MAX_RANGE));
 
     /**
      * Speaker.
      */
-    private Speaker speaker = new Speaker(60, 100);
+    private Speaker speaker = new Speaker(Integer.valueOf(SPEAKER_MIN_RANGE),
+                                          Integer.valueOf(SPEAKER_MAX_RANGE));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(prefListener);
 
         // Sets up all devices (hardcoded for now).
         this.allDevices.add(light);
@@ -131,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     @Override
     public void onResume() {
         super.onResume();
+
         // Connects to the server.
         new ConnectTask().execute("");
         // Sends the message to the server.
@@ -142,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     @Override
     public void onPause() {
         super.onPause();
+
         // Stops the network connection.
         if (tcpClient != null) {
             tcpClient.stopClient();
@@ -159,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             case R.id.action_lock:
@@ -177,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
 

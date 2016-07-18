@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/tv"
+        android:key="pref_key_storage_settings">
+
+        <EditTextPreference
+            android:key="tv_min_range"
+            android:title="@string/min_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="20" />
+
+        <EditTextPreference
+            android:key="tv_max_range"
+            android:title="@string/max_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="120" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/light"
+        android:key="pref_key_storage_settings">
+
+        <EditTextPreference
+            android:key="light_min_range"
+            android:title="@string/min_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="0" />
+
+        <EditTextPreference
+            android:key="light_max_range"
+            android:title="@string/max_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="50" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/shutter"
+        android:key="pref_key_storage_settings">
+
+        <EditTextPreference
+            android:key="shutter_min_range"
+            android:title="@string/min_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="140" />
+
+        <EditTextPreference
+            android:key="shutter_max_range"
+            android:title="@string/max_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="190" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/speaker"
+        android:key="pref_key_storage_settings">
+
+        <EditTextPreference
+            android:key="speaker_min_range"
+            android:title="@string/min_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="60" />
+
+        <EditTextPreference
+            android:key="speaker_max_range"
+            android:title="@string/max_range"
+            android:numeric="integer"
+            android:maxLength="3"
+            android:defaultValue="100" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
