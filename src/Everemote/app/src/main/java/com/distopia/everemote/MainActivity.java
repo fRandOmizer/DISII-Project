@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         setContentView(R.layout.activity_main);
 
         // connect to the server
-        AsyncTask<String, String, RaspiClient> task = new connectTask().execute("");
+        AsyncTask<String, String, RaspiClient> task = new ConnectTask().execute("");
 
         // Sets up all devices (hardcoded for now).
         this.allDevices.add(light);
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         light.toggleLight();
     }
 
-    public class connectTask extends AsyncTask<String,String,RaspiClient> {
+    public class ConnectTask extends AsyncTask<String,String,RaspiClient> {
 
         @Override
         protected RaspiClient doInBackground(String... message) {
