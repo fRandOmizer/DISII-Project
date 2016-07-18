@@ -159,12 +159,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
             if (light.isOn()) {
                 lightButton.setImageResource(R.drawable.lightbulb_on);
                 if (mTcpClient != null) {
-                    mTcpClient.sendMessage("LightsOn");
+                    mTcpClient.sendMessage("LightOn");
                 }
             } else {
                 lightButton.setImageResource(R.drawable.lightbulb_off);
                 if (mTcpClient != null) {
-                    mTcpClient.sendMessage("LightsOff");
+                    mTcpClient.sendMessage("LightOff");
                 }
             }
         }
