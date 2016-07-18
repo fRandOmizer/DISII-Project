@@ -77,12 +77,12 @@ public class RaspiServerGUI extends JFrame
               // lights
               if (message.contentEquals("lightOn"))
               {
-                Runtime.getRuntime().exec("./lightOn"); 
+                Runtime.getRuntime().exec("./lightOn.sh"); 
                 System.out.println("Lights are turned on");
               }
               else if(message.contentEquals("lightOff")) 
               {
-                Runtime.getRuntime().exec("./lightOff"); 
+                Runtime.getRuntime().exec("./lightOff.sh"); 
                 System.out.println("Lights are turned off");
               }
               // tv
