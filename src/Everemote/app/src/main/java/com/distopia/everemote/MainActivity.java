@@ -15,8 +15,10 @@ import com.distopia.everemote.devices.Speaker;
 import com.distopia.everemote.devices.TV;
 import com.distopia.everemote.devices.controls.Channel;
 import com.distopia.everemote.network.RaspiClient;
+import com.distopia.everewidgets.AbsoluteRegulatorView;
 import com.distopia.everewidgets.BannerSliderView;
 import com.distopia.everewidgets.CardView;
+import com.distopia.everewidgets.VolumeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     private static final String TAG = "MainActivity";
 
     /**
-     * TCP Client Connection
+     * TCP client connection.
      */
     private RaspiClient mTcpClient;
 
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * Speaker.
      */
-    private Speaker speaker = new Speaker(200, 250);
+    private Speaker speaker = new Speaker(60, 100);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +98,29 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
             });
         }
 
-        //sends the message to the server
+        // Sets the volume controls.
+        VolumeView volumeView = (VolumeView) findViewById(R.id.volume);
+        if(volumeView != null) {
+            volumeView.setOnUpdateListener(new VolumeView.OnUpdateListener() {
+                @Override
+                public void onUpdate(float value) {
+                    speaker.getSpeakerControl().setVolume(value);
+                }
+            });
+        }
+
+        // Sets the speaker controls.
+        AbsoluteRegulatorView shutterView = null;//(AbsoluteRegulatorView) findViewById(R.id.shutter);
+        if(shutterView != null) {
+            shutterView.setOnUpdateListener(new AbsoluteRegulatorView.OnUpdateListener() {
+                @Override
+                public void onUpdate(float value) {
+                    shutter.getShutterControl().setTargetValue(value);
+                }
+            });
+        }
+
+        // Sends the message to the server.
         if (mTcpClient != null) {
             mTcpClient.sendMessage("Connection Ok");
         }
@@ -176,12 +200,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         @Override
         protected RaspiClient doInBackground(String... message) {
 
-            //we create a TCPClient object and
+            // We create a TCPClient object and...
             mTcpClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
                 @Override
                 //here the messageReceived method is implemented
                 public void messageReceived(String message) {
-                    //this method calls the onProgressUpdate
+                    // ...this method calls the onProgressUpdate.
                     publishProgress(message);
                 }
             });
@@ -193,12 +217,6 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-
-            //in the arrayList we add the messaged received from server
-            // arrayList.add(values[0]);
-            // notify the adapter that the data set has changed. This means that new message received
-            // from server was added to the list
-            // mAdapter.notifyDataSetChanged();
         }
     }
 

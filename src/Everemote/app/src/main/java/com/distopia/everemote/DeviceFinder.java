@@ -11,6 +11,7 @@ import com.distopia.everemote.devices.Device;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,7 +20,8 @@ import java.util.List;
  *  background.
  */
 public class DeviceFinder implements SensorEventListener {
-    public static final String TAG = "DeviceFinder";
+    private static final String TAG = "DeviceFinder";
+    private static final long UPDATE_THRESHOLD = 1000; // 1 second.
 
     /**
      * Is thrown in case the device does not have the compass sensors available.
@@ -38,6 +40,8 @@ public class DeviceFinder implements SensorEventListener {
     private int deviceAngle = 0;
     /// The previous device angle (To be more efficient in the updating process).
     private int prevDeviceAngle = 1;
+    /// The last time an update was sent to the subscribers.
+    private Date lastUpdate = new Date();
 
     /// Stores the current rotation matrix from which the orientation data is calculated.
     private float[] rMat        = new float[9];
@@ -143,7 +147,7 @@ public class DeviceFinder implements SensorEventListener {
             // Gets the azimuth value (orientation[0]) in degrees.
             deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation )[0]) + 360) % 360;
             // Checks if we even need to consider an update.
-            if(prevDeviceAngle != deviceAngle) {
+            if(needsUpdate()) {
                 // Gathers the new device list.
                 newDevices.clear();
                 for (Device device : this.devices) {
@@ -164,5 +168,10 @@ public class DeviceFinder implements SensorEventListener {
                 prevDeviceAngle = deviceAngle;
             }
         }
+    }
+
+    private boolean needsUpdate() {
+        return (prevDeviceAngle != deviceAngle)
+                && (((new java.util.Date()).getTime() - lastUpdate.getTime()) > UPDATE_THRESHOLD);
     }
 }
