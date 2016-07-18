@@ -70,17 +70,20 @@ public class RaspiServerGUI extends JFrame
           public void messageReceived(String message)
           {
             messagesArea.append("\n " + message);
+            System.out.println("Received command: " + message);
 
             try
             {
               // lights
               if (message.contentEquals("lightOn"))
               {
-                Runtime.getRuntime().exec("pilight-send -p raw -c \"320 4950 330 1000 320 1010 970 360 320 1010 320 1000 980 370 310 1010 320 1020 310 1010 970 370 320 1010 970 360 970 360 310 1030 960 370 960 360 970 360 320 1020 320 1010 970 360 310 1020 310 1040 300 1020 310 1020 310 1010 970 370 960 370 310 1020\"");
+                Runtime.getRuntime().exec("./lightOn"); 
+                System.out.println("Lights are turned on");
               }
-              else if(message.contentEquals("lightOn")) 
+              else if(message.contentEquals("lightOff")) 
               {
-                Runtime.getRuntime().exec("pilight-send -p raw -c \"330 4940 330 1000 320 1010 970 360 320 1010 310 1010 970 370 320 1010 970 360 320 1010 970 370 960 370 960 360 320 1010 970 380 310 1020 300 1020 960 370 960 380 310 1020 960 370 310 1010 970 380 300 1030 950 380 300 1020 960 380 950 370 310 1020\"");
+                Runtime.getRuntime().exec("./lightOff"); 
+                System.out.println("Lights are turned off");
               }
               // tv
               

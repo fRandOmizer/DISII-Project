@@ -16,14 +16,14 @@ public class LightOnOffControlProxy extends ControlProxy implements IOnOffTurnab
     @Override
     public void turnOn() {
         if (tcpClient != null) {
-            tcpClient.sendMessage("LightsOn");
+            tcpClient.sendMessage("LightOn");
         }
     }
 
     @Override
     public void turnOff() {
         if (tcpClient != null) {
-            tcpClient.sendMessage("LightsOff");
+            tcpClient.sendMessage("LightOff");
         }
     }
 }
