@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class DeviceFinder implements SensorEventListener {
     private static final String TAG = "DeviceFinder";
-    private static final long UPDATE_THRESHOLD = 1000; // 1 second.
+    private static final long UPDATE_THRESHOLD = 5000; // 1 second.
 
     /**
      * Is thrown in case the device does not have the compass sensors available.
@@ -147,7 +147,7 @@ public class DeviceFinder implements SensorEventListener {
             // Gets the azimuth value (orientation[0]) in degrees.
             deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation )[0]) + 360) % 360;
             // Checks if we even need to consider an update.
-            if(needsUpdate()) {
+            if(subscribersNeedUpdate()) {
                 // Gathers the new device list.
                 newDevices.clear();
                 for (Device device : this.devices) {
@@ -170,7 +170,12 @@ public class DeviceFinder implements SensorEventListener {
         }
     }
 
-    private boolean needsUpdate() {
+    /**
+     * Checks if the subscribers need an update.
+     * @return True if the angle changed and at least UPDATE_THRESHOLD ms passed since the last
+     *         subscription update.
+     */
+    private boolean subscribersNeedUpdate() {
         return (prevDeviceAngle != deviceAngle)
                 && (((new java.util.Date()).getTime() - lastUpdate.getTime()) > UPDATE_THRESHOLD);
     }

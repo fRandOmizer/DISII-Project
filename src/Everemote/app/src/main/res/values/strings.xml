@@ -2,4 +2,7 @@
     <string name="app_name">Everemote</string>
     <string name="lightbulb">Lightbulb</string>
     <string name="pc">PC</string>
+    <string name="action_lock">Lock the controls</string>
+    <string name="action_select">Choose a device</string>
+    <string name="action_settings">Settings</string>
 </resources>

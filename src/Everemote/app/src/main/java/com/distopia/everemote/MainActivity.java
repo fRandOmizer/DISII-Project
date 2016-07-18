@@ -4,7 +4,11 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -29,12 +33,15 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * TCP client connection.
      */
-    private RaspiClient mTcpClient;
+    private RaspiClient tcpClient;
 
     DeviceFinder deviceFinder;
 
     private List<Device> allDevices = new ArrayList<>();
     private List<Device> curDevices = new ArrayList<>();
+
+    /// Whether the widget screen is currently locked or not.
+    private boolean widgetsLocked = false;
 
     /**
      * TV.
@@ -48,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * Light.
      */
-    private Light light = new Light(0, 50, mTcpClient);
+    private Light light = new Light(0, 50, tcpClient);
 
     /**
      * Shutter.
@@ -65,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // connect to the server
-        AsyncTask<String, String, RaspiClient> task = new ConnectTask().execute("");
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
 
         // Sets up all devices (hardcoded for now).
         this.allDevices.add(light);
@@ -86,12 +93,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
         // Sets three images to the TV slider.
         BannerSliderView slider = (BannerSliderView) findViewById(R.id.tv_channels);
-        if(slider != null) {
+        if (slider != null) {
             slider.setImages(channelImages);
             slider.setOnSlideListener(new BannerSliderView.OnSlideListener() {
                 @Override
                 public void onSlide(int position) {
-                    if(0 <= position && position < channels.length) {
+                    if (0 <= position && position < channels.length) {
                         tv.getCannelControl().setCurrentChannel(channels[position]);
                     }
                 }
@@ -100,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
         // Sets the volume controls.
         VolumeView volumeView = (VolumeView) findViewById(R.id.volume);
-        if(volumeView != null) {
+        if (volumeView != null) {
             volumeView.setOnUpdateListener(new VolumeView.OnUpdateListener() {
                 @Override
                 public void onUpdate(float value) {
@@ -109,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
             });
         }
 
-        // Sets the speaker controls.
+        // Sets the shutter controls.
         AbsoluteRegulatorView shutterView = null;//(AbsoluteRegulatorView) findViewById(R.id.shutter);
-        if(shutterView != null) {
+        if (shutterView != null) {
             shutterView.setOnUpdateListener(new AbsoluteRegulatorView.OnUpdateListener() {
                 @Override
                 public void onUpdate(float value) {
@@ -119,54 +126,113 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 }
             });
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Connects to the server.
+        new ConnectTask().execute("");
         // Sends the message to the server.
-        if (mTcpClient != null) {
-            mTcpClient.sendMessage("Connection Ok");
+        if (tcpClient != null) {
+            tcpClient.sendMessage("Connection Ok");
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stops the network connection.
+        if (tcpClient != null) {
+            tcpClient.stopClient();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+
+            case R.id.action_lock:
+                // Toggles the locked icon and the locked flag.
+                if (widgetsLocked) {
+                    item.setIcon(R.drawable.ic_lock_open_white_24dp);
+                } else {
+                    item.setIcon(R.drawable.ic_lock_outline_white_24dp);
+                }
+                widgetsLocked = !widgetsLocked;
+                updateControlWidgets();
+                return true;
+
+            case R.id.action_select:
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 
     @Override
     public void setDevices(final List<Device> devices) {
         curDevices = devices;
+        updateControlWidgets();
+    }
+
+    /**
+     * Renders all control widgets according to the current device list. This function is run in the
+     * UI thread.
+     */
+    private void updateControlWidgets() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CardView tvChannelsCard = (CardView) findViewById(R.id.tv_channels_card);
-                CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
-                CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
-                //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
-                CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
-                if(tvChannelsCard != null) {
-                    tvChannelsCard.setVisibility(View.GONE);
-                }
-                if(tvVolumeCard != null) {
-                    tvVolumeCard.setVisibility(View.GONE);
-                }
-                if(lightOnOffCard != null) {
-                    lightOnOffCard.setVisibility(View.GONE);
-                }
-                /*if(shutterCard != null) {
-                    shutterCard.setVisibility(View.GONE);
-                }*/
-                if(speakerVolumeCard != null) {
-                    speakerVolumeCard.setVisibility(View.GONE);
-                }
-                for(Device deviceInRange : curDevices) {
-                    if(deviceInRange instanceof TV && tvChannelsCard != null && tvVolumeCard != null) {
-                        tvVolumeCard.setVisibility(View.VISIBLE);
-                        tvVolumeCard.getParent().bringChildToFront(tvVolumeCard);
-                        tvChannelsCard.setVisibility(View.VISIBLE);
-                        tvChannelsCard.getParent().bringChildToFront(tvChannelsCard);
-                    } else if(deviceInRange instanceof Light && lightOnOffCard != null) {
-                        lightOnOffCard.setVisibility(View.VISIBLE);
-                        lightOnOffCard.getParent().bringChildToFront(lightOnOffCard);
-                    } /*else if(deviceInRange instanceof Shutter && shutterCard != null) {
-                        shutterCard.setVisibility(View.VISIBLE);
-                        shutterCard.getParent().bringChildToFront(shutterCard);
-                    }*/ else if(deviceInRange instanceof Speaker && speakerVolumeCard != null) {
-                        speakerVolumeCard.setVisibility(View.VISIBLE);
-                        speakerVolumeCard.getParent().bringChildToFront(speakerVolumeCard);
+                if (!widgetsLocked) {
+                    CardView tvChannelsCard = (CardView) findViewById(R.id.tv_channels_card);
+                    CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
+                    CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
+                    //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
+                    CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
+                    if (tvChannelsCard != null) {
+                        tvChannelsCard.setVisibility(View.GONE);
+                    }
+                    if (tvVolumeCard != null) {
+                        tvVolumeCard.setVisibility(View.GONE);
+                    }
+                    if (lightOnOffCard != null) {
+                        lightOnOffCard.setVisibility(View.GONE);
+                    }
+                    /*if (shutterCard != null) {
+                        shutterCard.setVisibility(View.GONE);
+                    }*/
+                    if (speakerVolumeCard != null) {
+                        speakerVolumeCard.setVisibility(View.GONE);
+                    }
+                    for (Device deviceInRange : curDevices) {
+                        if (deviceInRange instanceof TV && tvChannelsCard != null
+                                && tvVolumeCard != null) {
+                            tvVolumeCard.setVisibility(View.VISIBLE);
+                            tvVolumeCard.getParent().bringChildToFront(tvVolumeCard);
+                            tvChannelsCard.setVisibility(View.VISIBLE);
+                            tvChannelsCard.getParent().bringChildToFront(tvChannelsCard);
+                        } else if (deviceInRange instanceof Light && lightOnOffCard != null) {
+                            lightOnOffCard.setVisibility(View.VISIBLE);
+                            lightOnOffCard.getParent().bringChildToFront(lightOnOffCard);
+                        } /*else if (deviceInRange instanceof Shutter && shutterCard != null) {
+                            shutterCard.setVisibility(View.VISIBLE);
+                            shutterCard.getParent().bringChildToFront(shutterCard);
+                        }*/ else if (deviceInRange instanceof Speaker && speakerVolumeCard != null) {
+                            speakerVolumeCard.setVisibility(View.VISIBLE);
+                            speakerVolumeCard.getParent().bringChildToFront(speakerVolumeCard);
+                        }
                     }
                 }
             }
@@ -179,16 +245,16 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
      */
     public void toggleLights(View view) {
         ImageButton lightButton = ((ImageButton) findViewById(R.id.lights_onoff));
-        if(lightButton != null) {
+        if (lightButton != null) {
             if (light.isOn()) {
                 lightButton.setImageResource(R.drawable.lightbulb_on);
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage("LightOn");
+                if (tcpClient != null) {
+                    tcpClient.sendMessage("LightOn");
                 }
             } else {
                 lightButton.setImageResource(R.drawable.lightbulb_off);
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage("LightOff");
+                if (tcpClient != null) {
+                    tcpClient.sendMessage("LightOff");
                 }
             }
         }
@@ -201,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         protected RaspiClient doInBackground(String... message) {
 
             // We create a TCPClient object and...
-            mTcpClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
+            tcpClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
                 @Override
                 //here the messageReceived method is implemented
                 public void messageReceived(String message) {
@@ -209,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     publishProgress(message);
                 }
             });
-            mTcpClient.run();
+            tcpClient.run();
 
             return null;
         }
