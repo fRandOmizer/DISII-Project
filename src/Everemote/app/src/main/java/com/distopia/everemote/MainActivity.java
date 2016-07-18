@@ -47,21 +47,37 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
             if(sharedPreferences != null) {
                 if ("tv_min_range".equals(key)) {
-                    tv.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, TV_MIN_RANGE)));
+                    tv.setAngleBeginning(
+                            Integer.valueOf(sharedPreferences.getString(key, TV_MIN_RANGE))
+                    );
                 } else if ("tv_max_range".equals(key)) {
-                    tv.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, TV_MAX_RANGE)));
+                    tv.setAngleEnd(
+                            Integer.valueOf(sharedPreferences.getString(key, TV_MAX_RANGE))
+                    );
                 } else if ("light_min_range".equals(key)) {
-                    light.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, LIGHT_MIN_RANGE)));
+                    light.setAngleBeginning(
+                            Integer.valueOf(sharedPreferences.getString(key, LIGHT_MIN_RANGE))
+                    );
                 } else if ("light_max_range".equals(key)) {
-                    light.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, LIGHT_MAX_RANGE)));
+                    light.setAngleEnd(
+                            Integer.valueOf(sharedPreferences.getString(key, LIGHT_MAX_RANGE))
+                    );
                 } else if ("shutter_min_range".equals(key)) {
-                    shutter.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, SHUTTER_MIN_RANGE)));
+                    shutter.setAngleBeginning(
+                            Integer.valueOf(sharedPreferences.getString(key, SHUTTER_MIN_RANGE))
+                    );
                 } else if ("shutter_max_range".equals(key)) {
-                    shutter.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, SHUTTER_MAX_RANGE)));
+                    shutter.setAngleEnd(
+                            Integer.valueOf(sharedPreferences.getString(key, SHUTTER_MAX_RANGE))
+                    );
                 } else if ("speaker_min_range".equals(key)) {
-                    speaker.setAngleBeginning(Integer.valueOf(sharedPreferences.getString(key, SPEAKER_MIN_RANGE)));
+                    speaker.setAngleBeginning(
+                            Integer.valueOf(sharedPreferences.getString(key, SPEAKER_MIN_RANGE))
+                    );
                 } else if ("speaker_max_range".equals(key)) {
-                    speaker.setAngleEnd(Integer.valueOf(sharedPreferences.getString(key, SPEAKER_MAX_RANGE)));
+                    speaker.setAngleEnd(
+                            Integer.valueOf(sharedPreferences.getString(key, SPEAKER_MAX_RANGE))
+                    );
                 }
             }
         }

@@ -21,9 +21,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
-
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
@@ -32,7 +30,7 @@
             android:visibility="gone"
             app:headerText="Channels"
             app:colorBackground="@color/card_tv"
-            app:iconDrawable="@mipmap/ic_launcher">
+            app:iconDrawable="@drawable/ic_tv_black_24dp">
 
             <com.distopia.everewidgets.BannerSliderView
                 android:layout_width="match_parent"
@@ -52,7 +50,7 @@
             android:visibility="gone"
             app:headerText="Sound"
             app:colorBackground="@color/card_tv"
-            app:iconDrawable="@mipmap/ic_launcher">
+            app:iconDrawable="@drawable/ic_tv_black_24dp">
 
             <com.distopia.everewidgets.VolumeView
                 android:layout_width="match_parent"
@@ -67,7 +65,7 @@
             android:visibility="gone"
             app:headerText="Speaker Volume"
             app:colorBackground="@color/card_speaker"
-            app:iconDrawable="@mipmap/ic_launcher"
+            app:iconDrawable="@drawable/ic_speaker_black_24dp"
             android:id="@+id/speaker_volume_card">
 
             <com.distopia.everewidgets.VolumeView
@@ -83,7 +81,7 @@
             android:visibility="gone"
             app:headerText="Lights"
             app:colorBackground="@color/card_light"
-            app:iconDrawable="@mipmap/ic_launcher"
+            app:iconDrawable="@drawable/ic_lightbulb_outline_black_24dp"
             android:id="@+id/lights_onoff_card">
 
             <ImageButton
@@ -98,30 +96,12 @@
 
         </com.distopia.everewidgets.CardView>
 
-        <com.distopia.everewidgets.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:headerText="PC"
-            app:colorBackground="@color/card_pc"
-            app:iconDrawable="@mipmap/ic_launcher"
-            android:id="@+id/pc_onoff_card">
-
-            <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/imac_off"
-                android:contentDescription="@string/pc"
-                android:id="@+id/pc_onoff" />
-
-        </com.distopia.everewidgets.CardView>
-
         <!--<com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Shutters"
             app:colorBackground="@color/card_shutter"
-            app:iconDrawable="@mipmap/ic_launcher"
+            app:iconDrawable="@drawable/ic_view_headline_black_24dp"
             android:id="@+id/shutter_card">
 
             <com.distopia.everewidgets.AbsoluteRegulatorView

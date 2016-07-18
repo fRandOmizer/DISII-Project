@@ -3,10 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="card_tv">#92ff95</color>
-    <color name="card_light">#a1d8f5</color>
-    <color name="card_shutter">#fd9d9d</color>
-    <color name="card_speaker">#d8ff76</color>
-    <color name="card_pc">#cfcfcf</color>
+    <color name="card_tv">#CBDBE0</color>
+    <color name="card_light">#ECF1F2</color>
+    <color name="card_speaker">#DCE8EB</color>
+    <color name="card_shutter">#F7F9FE</color>
+    <color name="card_pc">#DCE8EB</color>
     <color name="black">#ffffff</color>
 </resources>
