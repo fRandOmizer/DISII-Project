@@ -9,7 +9,7 @@ import java.net.Socket;
 public class RaspiClient {
 
     private String serverMessage;
-    public static final String SERVERIP = "192.168.137.8"; //server IP address
+    public static final String SERVERIP = "192.168.137.137"; //server IP address
     public static final int SERVERPORT = 4444;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
