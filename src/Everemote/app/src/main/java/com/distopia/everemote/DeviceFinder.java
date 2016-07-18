@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class DeviceFinder implements SensorEventListener {
     private static final String TAG = "DeviceFinder";
-    private static final long UPDATE_THRESHOLD = 5000; // 1 second.
+    private static final long UPDATE_THRESHOLD = 500; // 1 second.
 
     /**
      * Is thrown in case the device does not have the compass sensors available.
@@ -166,6 +166,7 @@ public class DeviceFinder implements SensorEventListener {
                     prevDevices = new ArrayList<Device>(newDevices);
                 }
                 prevDeviceAngle = deviceAngle;
+                lastUpdate = new Date();
             }
         }
     }
