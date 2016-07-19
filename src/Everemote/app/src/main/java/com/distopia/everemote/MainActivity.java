@@ -137,7 +137,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
      * Speaker.
      */
     private Speaker speaker = new Speaker(Integer.valueOf(SPEAKER_MIN_RANGE),
-                                          Integer.valueOf(SPEAKER_MAX_RANGE));
+                                          Integer.valueOf(SPEAKER_MAX_RANGE),
+                                          raspiClient);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
