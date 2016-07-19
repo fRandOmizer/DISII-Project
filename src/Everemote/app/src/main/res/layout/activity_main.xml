@@ -36,6 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_channels"
+                android:gravity="center_vertical"
                 app:offsetBottom="0.15"
                 app:offsetTop="0.0"
                 app:mainImage="@drawable/tv_transparent_s"

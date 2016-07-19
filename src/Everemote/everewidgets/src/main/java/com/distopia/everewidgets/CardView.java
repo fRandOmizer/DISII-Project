@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,7 +171,16 @@ public class CardView extends ViewGroup {
                 mTmpContainerRect.top = top + mCardHeaderSize;
                 mTmpContainerRect.bottom = parentBottom;
 
-                child.layout(mTmpContainerRect.left, mTmpContainerRect.top,
+
+                int yOffset = 0;
+                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                if (lp.gravity == Gravity.CENTER_VERTICAL)
+                {
+                    yOffset = child.getMeasuredHeight() / 2;
+                }
+
+
+                child.layout(mTmpContainerRect.left, mTmpContainerRect.top + yOffset,
                         mTmpContainerRect.right, mTmpContainerRect.bottom);
             }
         }
@@ -224,6 +234,9 @@ public class CardView extends ViewGroup {
      * Class holding layout parameters
      */
     public static class LayoutParams extends MarginLayoutParams {
+
+        public int gravity = Gravity.TOP | Gravity.START;
+
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
         }
