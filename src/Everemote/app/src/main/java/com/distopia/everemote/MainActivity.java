@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * TCP client connection.
      */
-    private RaspiClient tcpClient;
+    private RaspiClient raspiClient;
 
     DeviceFinder deviceFinder;
 
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * TV.
      */
-    private TV tv = new TV(Integer.valueOf(TV_MIN_RANGE), Integer.valueOf(TV_MAX_RANGE));
+    private TV tv = new TV(Integer.valueOf(TV_MIN_RANGE), Integer.valueOf(TV_MAX_RANGE), raspiClient);
     private int[] channelImages = {R.drawable.das_erste_s, R.drawable.zdf_s, R.drawable.rtl_s};
     private Channel[] channels = {new Channel("Das Erste", 1),
                                   new Channel("ZDF", 2),
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
      */
     private Light light = new Light(Integer.valueOf(LIGHT_MIN_RANGE),
                                     Integer.valueOf(LIGHT_MAX_RANGE),
-                                    tcpClient);
+            raspiClient);
 
     /**
      * Shutter.
@@ -248,8 +248,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         // Connects to the server.
         new ConnectTask().execute("");
         // Sends the message to the server.
-        if (tcpClient != null) {
-            tcpClient.sendMessage("Connection Ok");
+        if (raspiClient != null) {
+            raspiClient.sendMessage("Connection Ok");
         }
     }
 
@@ -258,8 +258,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         super.onPause();
 
         // Stops the network connection.
-        if (tcpClient != null) {
-            tcpClient.stopClient();
+        if (raspiClient != null) {
+            raspiClient.stopClient();
         }
     }
 
@@ -411,13 +411,13 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         if (lightButton != null) {
             if (light.isOn()) {
                 lightButton.setImageResource(R.drawable.lightbulb_on);
-                if (tcpClient != null) {
-                    tcpClient.sendMessage("LightOn");
+                if (raspiClient != null) {
+                    raspiClient.sendMessage("LightOn");
                 }
             } else {
                 lightButton.setImageResource(R.drawable.lightbulb_off);
-                if (tcpClient != null) {
-                    tcpClient.sendMessage("LightOff");
+                if (raspiClient != null) {
+                    raspiClient.sendMessage("LightOff");
                 }
             }
         }
@@ -430,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         protected RaspiClient doInBackground(String... message) {
 
             // We create a TCPClient object and...
-            tcpClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
+            raspiClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
                 @Override
                 //here the messageReceived method is implemented
                 public void messageReceived(String message) {
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     publishProgress(message);
                 }
             });
-            tcpClient.run();
+            raspiClient.run();
 
             return null;
         }

@@ -13,11 +13,15 @@ public class RaspiServerGUI extends JFrame
   private JTextField message;
   private JButton startServer;
   private RaspiServer mServer;
-
+  
+  private IRTV tv; 
+  
   public RaspiServerGUI()
   {
 
     super("RaspiServer");
+    
+    tv = new IRTV();
 
     JPanel panelFields = new JPanel();
     panelFields.setLayout(new BoxLayout(panelFields, BoxLayout.X_AXIS));
@@ -77,21 +81,52 @@ public class RaspiServerGUI extends JFrame
               // lights
               if (message.contentEquals("LightOn"))
               {
-                Runtime.getRuntime().exec("./lightOn.sh"); 
+                Runtime.getRuntime().exec("./lightOn.sh");
                 System.out.println("Lights are turned on");
               }
-              else if(message.contentEquals("LightOff")) 
+              else if (message.contentEquals("LightOff"))
               {
-                Runtime.getRuntime().exec("./lightOff.sh"); 
+                Runtime.getRuntime().exec("./lightOff.sh");
                 System.out.println("Lights are turned off");
               }
               // tv
-              
+              else if (message.contentEquals("TVOn"))
+              {
+                tv.turnon();
+                System.out.println("TV is turned on");
+              }
+              else if (message.contentEquals("TVOff"))
+              {
+                tv.turnoff();
+                System.out.println("TV is turned off");
+              }
+              else if (message.contains("TVSetVolume"))
+              {
+                int value = getMessageValue(message);
+                tv.setvolume(value);
+                System.out.println("TV volume set to" + Integer.toString(value));
+              }
+              else if (message.contains("TVSetChannel"))
+              {
+                int value = getMessageValue(message);
+                setTVChannel(value);
+                System.out.println("TV channel set to" + Integer.toString(value));
+              }
+              else if (message.contains("TVChannelUp"))
+              {
+                tv.increachannel();
+                System.out.println("TV channel up");
+              }
+              else if (message.contains("TVChannelDown"))
+              {
+                tv.decreasechannel();
+                System.out.println("TV channel down");
+              }
               // speaker
-              
+
               // shutter
             }
-            catch(IOException e) 
+            catch (IOException e)
             {
               System.out.println("IO Error while exec commands");
             }
@@ -120,5 +155,31 @@ public class RaspiServerGUI extends JFrame
 
     setSize(300, 170);
     setVisible(true);
+  }
+  
+  private int getMessageValue(String message)
+  {
+    String value = message.substring(message.indexOf(":"));
+    value = value.trim();
+    return Integer.parseInt(value);
+  }
+  
+  private void setTVChannel(int channel)
+  {
+    int curCh = tv.getchannel();
+    if (curCh < channel) 
+    {     
+      for (int i = curCh; i < channel; i++)
+      {
+        tv.increachannel();
+      }
+    }
+    else if (curCh > channel)
+    {
+      for (int i = curCh; i > channel; i--)
+      {
+        tv.decreasechannel();
+      }
+    }
   }
 }

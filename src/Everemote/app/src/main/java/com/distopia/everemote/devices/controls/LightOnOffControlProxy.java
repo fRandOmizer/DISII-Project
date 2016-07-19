@@ -5,25 +5,23 @@ import com.distopia.everemote.network.RaspiClient;
 /**
  * Created by chris on 08.07.2016.
  */
-public class LightOnOffControlProxy extends ControlProxy implements IOnOffTurnable {
-
-    RaspiClient tcpClient;
+public class LightOnOffControlProxy extends RaspiControlProxy implements IOnOffTurnable {
 
     public LightOnOffControlProxy(RaspiClient tcpClient) {
-        this.tcpClient = tcpClient;
+        super(tcpClient);
     }
 
     @Override
     public void turnOn() {
-        if (tcpClient != null) {
-            tcpClient.sendMessage("LightOn");
+        if (raspiClient != null) {
+            raspiClient.sendMessage("LightOn");
         }
     }
 
     @Override
     public void turnOff() {
-        if (tcpClient != null) {
-            tcpClient.sendMessage("LightOff");
+        if (raspiClient != null) {
+            raspiClient.sendMessage("LightOff");
         }
     }
 }

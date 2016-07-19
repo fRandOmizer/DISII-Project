@@ -6,14 +6,15 @@ import com.distopia.everemote.network.RaspiClient;
 /**
  * Created by chris on 11.07.2016.
  */
-public class Light extends Device {
+public class Light extends RaspiDevice {
 
     private boolean on = false;
 
     private LightOnOffControlProxy onOffControl;
 
-    public Light(RaspiClient tcpClient) {
-        onOffControl = new LightOnOffControlProxy(tcpClient);
+    public Light(RaspiClient raspiClient) {
+        super(raspiClient);
+        onOffControl = new LightOnOffControlProxy(raspiClient);
         addControl(onOffControl);
 
     }
@@ -23,9 +24,9 @@ public class Light extends Device {
      * @param angleBeginning The angle in which the beginning of the light is located.
      * @param angleEnd The angle in which the end of the light is located.
      */
-    public Light(int angleBeginning, int angleEnd, RaspiClient tcpClient) {
-        super(angleBeginning, angleEnd);
-        onOffControl = new LightOnOffControlProxy(tcpClient);
+    public Light(int angleBeginning, int angleEnd, RaspiClient raspiClient) {
+        super(angleBeginning, angleEnd, raspiClient);
+        onOffControl = new LightOnOffControlProxy(raspiClient);
         addControl(onOffControl);
     }
 
