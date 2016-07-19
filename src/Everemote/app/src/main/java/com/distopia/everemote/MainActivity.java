@@ -114,7 +114,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     /**
      * TV.
      */
-    private TV tv = new TV(Integer.valueOf(TV_MIN_RANGE), Integer.valueOf(TV_MAX_RANGE), raspiClient);
+    private TV tv = new TV(Integer.valueOf(TV_MIN_RANGE),
+                                           Integer.valueOf(TV_MAX_RANGE),
+                                           raspiClient);
     private int[] channelImages = {R.drawable.das_erste_s, R.drawable.zdf_s, R.drawable.rtl_s};
     private Channel[] channels = {new Channel("Das Erste", 1),
                                   new Channel("ZDF", 2),
@@ -178,6 +180,17 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     if (0 <= position && position < channels.length) {
                         tv.getCannelControl().setCurrentChannel(channels[position]);
                     }
+                }
+            });
+        }
+
+        // Sets the TV volume controls.
+        VolumeView tvVolumeView = (VolumeView) findViewById(R.id.tv_volume_card);
+        if (tvVolumeView != null) {
+            tvVolumeView.setOnUpdateListener(new VolumeView.OnUpdateListener() {
+                @Override
+                public void onUpdate(float value) {
+                    tv.getVolumeControl().setVolume(value);
                 }
             });
         }
@@ -410,15 +423,34 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         ImageButton lightButton = ((ImageButton) findViewById(R.id.lights_onoff));
         if (lightButton != null) {
             if (light.isOn()) {
-                lightButton.setImageResource(R.drawable.lightbulb_on);
-                if (raspiClient != null) {
-                    raspiClient.sendMessage("LightOn");
-                }
-            } else {
                 lightButton.setImageResource(R.drawable.lightbulb_off);
                 if (raspiClient != null) {
                     raspiClient.sendMessage("LightOff");
                 }
+            } else {
+                lightButton.setImageResource(R.drawable.lightbulb_on);
+                if (raspiClient != null) {
+                    raspiClient.sendMessage("LightOn");
+                }
+            }
+        }
+        light.toggleLight();
+    }
+
+
+    /**
+     * Toggles the TV. Is called in case the user pressed on the TV on-off button.
+     * @param view The view that issued this call.
+     */
+    public void toggleTv(View view) {
+        ImageButton tvButton = ((ImageButton) findViewById(R.id.tv_onoff));
+        if (tvButton != null) {
+            if (tv.getOnOffControl().isOn()) {
+                tvButton.setImageResource(R.drawable.tv_transparent_s_off);
+                tv.getOnOffControl().turnOff();
+            } else {
+                tvButton.setImageResource(R.drawable.tv_transparent_s_on);
+                tv.getOnOffControl().turnOn();
             }
         }
         light.toggleLight();

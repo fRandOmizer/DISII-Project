@@ -42,6 +42,27 @@
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/tv_onoff_card"
+            android:visibility="gone"
+            app:headerText="Channels"
+            app:colorBackground="@color/card_tv"
+            app:iconDrawable="@drawable/ic_tv_black_24dp">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/tv_transparent_s_off"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/tv"
+                android:scaleType="fitCenter"
+                android:id="@+id/tv_onoff"
+                android:onClick="toggleTv"/>
+
+        </com.distopia.everewidgets.CardView>
+
+        <com.distopia.everewidgets.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/tv_channels_card"
             android:visibility="gone"
             app:headerText="Channels"
