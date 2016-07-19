@@ -432,7 +432,6 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                             lightOnOffCard.setVisibility(View.VISIBLE);
                             lightOnOffCard.getParent().bringChildToFront(lightOnOffCard);
                         } else if (deviceInRange instanceof Shutter && shutterCard != null) {
-                            Log.i(TAG, "GETTING SHUTTER HEEEY");
                             shutterCard.setVisibility(View.VISIBLE);
                             shutterCard.getParent().bringChildToFront(shutterCard);
                         } else if (deviceInRange instanceof Speaker && speakerVolumeCard != null) {
