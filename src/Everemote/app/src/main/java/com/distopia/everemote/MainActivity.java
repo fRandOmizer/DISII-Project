@@ -31,6 +31,7 @@ import com.distopia.everewidgets.FlowerView;
 import com.distopia.everewidgets.VolumeView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable, FlowerView.OnUpdateListener {
@@ -102,17 +103,13 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     private MenuItem lockItem = null;
 
     // manual map stuff
-    int[] mapIds = {
+    final private int[] mapIds = {
             R.drawable.ic_tv_black_24dp,
             R.drawable.ic_lightbulb_outline_black_24dp,
             R.drawable.ic_speaker_black_24dp
     };
 
-    int[] cardsToShow = {
-            R.id.tv_channels_card,
-            R.id.lights_onoff_card,
-            R.id.speaker_volume_card,
-    };
+    private HashMap<Integer, int[]> idToCard = new HashMap<>();
 
     /**
      * TV.
@@ -208,6 +205,10 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
 
         // creates manual map
+        idToCard.put(R.drawable.ic_tv_black_24dp, new int[]{R.id.tv_channels_card, R.id.tv_volume_card});
+        idToCard.put(R.drawable.ic_lightbulb_outline_black_24dp, new int[]{R.id.lights_onoff_card});
+        idToCard.put(R.drawable.ic_speaker_black_24dp, new int[]{R.id.speaker_volume_card});
+
         FlowerView flower = (FlowerView) findViewById(R.id.flower);
         updateMap();
         flower.setOnUpdateListener(this);
@@ -329,8 +330,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         CardView mapCard = (CardView) findViewById(R.id.flower_card);
         mapCard.setVisibility(View.GONE);
 
-        CardView cardToShow = (CardView) findViewById(cardsToShow[value]);
-        cardToShow.setVisibility(View.VISIBLE);
+        int[] cardIds = idToCard.get(mapIds[value]);
+
+        for (int i = 0; i < cardIds.length; i++) {
+            CardView cardToShow = (CardView) findViewById(cardIds[i]);
+            cardToShow.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
