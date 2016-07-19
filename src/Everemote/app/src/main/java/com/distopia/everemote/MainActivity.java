@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
 
         // creates manual map
-        idToCard.put(R.drawable.ic_tv_black_24dp, new int[]{R.id.tv_channels_card, R.id.tv_volume_card});
+        idToCard.put(R.drawable.ic_tv_black_24dp, new int[]{R.id.tv_channels_card, R.id.tv_volume_card, R.id.tv_onoff_card});
         idToCard.put(R.drawable.ic_lightbulb_outline_black_24dp, new int[]{R.id.lights_onoff_card});
         idToCard.put(R.drawable.ic_speaker_black_24dp, new int[]{R.id.speaker_volume_card});
 
@@ -259,12 +259,23 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     public void onResume() {
         super.onResume();
 
+        // We create a TCPClient object and...
+        raspiClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
+            @Override
+            //here the messageReceived method is implemented
+            public void messageReceived(String message) {
+
+            }
+        });
+
+        tv.getOnOffControl().setRaspiClient(raspiClient);
+        tv.getVolumeControl().setRaspiClient(raspiClient);
+        tv.getCannelControl().setRaspiClient(raspiClient);
+        light.getOnOffControl().setRaspiClient(raspiClient);
+        speaker.getSpeakerControl().setRaspiClient(raspiClient);
+
         // Connects to the server.
         new ConnectTask().execute("");
-        // Sends the message to the server.
-        if (raspiClient != null) {
-            raspiClient.sendMessage("Connection Ok");
-        }
     }
 
     @Override
@@ -326,6 +337,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 tvChannelsCard.setVisibility(View.GONE);
                 CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
                 tvVolumeCard.setVisibility(View.GONE);
+                CardView tvOnOffCard = (CardView) findViewById(R.id.tv_onoff_card);
+                tvOnOffCard.setVisibility(View.GONE);
                 CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
                 lightOnOffCard.setVisibility(View.GONE);
                 //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
@@ -375,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 if (!widgetsLocked) {
                     CardView tvChannelsCard = (CardView) findViewById(R.id.tv_channels_card);
                     CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
+                    CardView tvOnOffCard = (CardView) findViewById(R.id.tv_onoff_card);
                     CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
                     //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
                     CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
@@ -383,6 +397,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     }
                     if (tvVolumeCard != null) {
                         tvVolumeCard.setVisibility(View.GONE);
+                    }
+                    if (tvOnOffCard != null) {
+                        tvOnOffCard.setVisibility(View.GONE);
                     }
                     if (lightOnOffCard != null) {
                         lightOnOffCard.setVisibility(View.GONE);
@@ -395,11 +412,13 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     }
                     for (Device deviceInRange : curDevices) {
                         if (deviceInRange instanceof TV && tvChannelsCard != null
-                                && tvVolumeCard != null) {
+                                && tvVolumeCard != null && tvOnOffCard != null) {
                             tvVolumeCard.setVisibility(View.VISIBLE);
                             tvVolumeCard.getParent().bringChildToFront(tvVolumeCard);
                             tvChannelsCard.setVisibility(View.VISIBLE);
                             tvChannelsCard.getParent().bringChildToFront(tvChannelsCard);
+                            tvOnOffCard.setVisibility(View.VISIBLE);
+                            tvOnOffCard.getParent().bringChildToFront(tvOnOffCard);
                         } else if (deviceInRange instanceof Light && lightOnOffCard != null) {
                             lightOnOffCard.setVisibility(View.VISIBLE);
                             lightOnOffCard.getParent().bringChildToFront(lightOnOffCard);
@@ -462,15 +481,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         @Override
         protected RaspiClient doInBackground(String... message) {
 
-            // We create a TCPClient object and...
-            raspiClient = new RaspiClient(new RaspiClient.OnMessageReceived() {
-                @Override
-                //here the messageReceived method is implemented
-                public void messageReceived(String message) {
-                    // ...this method calls the onProgressUpdate.
-                    publishProgress(message);
-                }
-            });
+            raspiClient.sendMessage("Connection Ok");
             raspiClient.run();
 
             return null;

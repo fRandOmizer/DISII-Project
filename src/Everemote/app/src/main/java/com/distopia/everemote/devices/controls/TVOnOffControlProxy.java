@@ -1,5 +1,7 @@
 package com.distopia.everemote.devices.controls;
 
+import android.util.Log;
+
 import com.distopia.everemote.network.RaspiClient;
 
 /**
@@ -18,6 +20,8 @@ public class TVOnOffControlProxy extends RaspiControlProxy implements IOnOffTurn
         on = true;
         if (raspiClient != null) {
             raspiClient.sendMessage("TVOn");
+        } else {
+            Log.i("Bla", "Client is null in TV ON OFF");
         }
     }
 
@@ -26,6 +30,8 @@ public class TVOnOffControlProxy extends RaspiControlProxy implements IOnOffTurn
         on = false;
         if (raspiClient != null) {
             raspiClient.sendMessage("TVOff");
+        } else {
+            Log.i("Bla", "Client is null in TV ON OFF");
         }
     }
 

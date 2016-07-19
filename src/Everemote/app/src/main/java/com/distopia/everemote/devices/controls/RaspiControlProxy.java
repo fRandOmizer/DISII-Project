@@ -12,4 +12,8 @@ public abstract class RaspiControlProxy extends ControlProxy {
     public RaspiControlProxy(RaspiClient tcpClient) {
         this.raspiClient = tcpClient;
     }
+
+    public void setRaspiClient(RaspiClient raspiClient) {
+        this.raspiClient = raspiClient;
+    }
 }
