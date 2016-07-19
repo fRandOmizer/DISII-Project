@@ -347,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     @Override
     public void setAngle(int angle) {
         FlowerView flower = (FlowerView) findViewById(R.id.flower);
-        flower.setAngleOffset(-angle - 90);
+        flower.setAngleOffset(360 -angle - 90);
     }
 
     /**

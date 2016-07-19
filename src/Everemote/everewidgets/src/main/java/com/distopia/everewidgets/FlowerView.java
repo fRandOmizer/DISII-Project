@@ -227,6 +227,7 @@ public class FlowerView extends View {
             for (int j = 0; j <= arcPartCount; j++) {
                 double angle = baseAngle + angleStep * j;
                 double size = determineGrowthFactorForAngle(angle, mAngleOfMaxGrowth) * growthFactor;
+                
                 if (determineGrowthFactorForAngle(angle, mAngleOfMaxGrowth) == 1f && !alreadyMarked) {
                     marked = true;
                     alreadyMarked = true;
@@ -254,7 +255,6 @@ public class FlowerView extends View {
 
             if (marked) {
                 mMarkedId = i;
-                System.out.println(i);
             }
         }
 
