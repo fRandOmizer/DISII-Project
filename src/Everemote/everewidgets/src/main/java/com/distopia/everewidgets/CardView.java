@@ -20,6 +20,7 @@ import android.widget.RemoteViews;
 public class CardView extends ViewGroup {
     private Paint mBoxPaint;
     private Paint mTextPaint;
+    private Paint mStrokePaint;
 
     private int mCardHeaderSize = 0;
 
@@ -92,6 +93,10 @@ public class CardView extends ViewGroup {
         mBoxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBoxPaint.setColor(mBackgroundColor);
         mBoxPaint.setStyle(Paint.Style.FILL);
+
+        mStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mStrokePaint.setColor(Color.argb(255,0,0,0));
+        mStrokePaint.setStyle(Paint.Style.STROKE);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(Color.argb(255,0,0,0));
@@ -245,6 +250,11 @@ public class CardView extends ViewGroup {
 
         // Draw card background
         canvas.drawRect(mCardBounds.left, mCardBounds.top, mCardBounds.right, mCardBounds.bottom, mBoxPaint);
+        mStrokePaint.setColor(Color.BLACK);
+        mStrokePaint.setStrokeWidth(3);
+        canvas.drawRect(mCardBounds.left, mCardBounds.top, mCardBounds.right, mCardBounds.bottom, mStrokePaint);
+        mStrokePaint.setStrokeWidth(1);
+        canvas.drawLine(mCardBounds.left, mCardBounds.top + mCardHeaderSize, mCardBounds.right, mCardBounds.top + mCardHeaderSize, mStrokePaint);
 
         // Draw icon in top left corner
         if (mIcon != null) {
@@ -254,9 +264,9 @@ public class CardView extends ViewGroup {
 
         // Draw header text
         if (mHeader != null) {
-            mTextPaint.setTextSize(mCardHeaderSize);
+            mTextPaint.setTextSize(mCardHeaderSize/3);
             mTextPaint.getTextBounds(mHeader, 0, mHeader.length(), mTextBounds);
-            canvas.drawText(mHeader, mCardBounds.left + mCardHeaderSize, mCardBounds.top + (mCardHeaderSize / 2) - mTextBounds.exactCenterY(), mTextPaint);
+            canvas.drawText(mHeader, mCardBounds.left + mCardHeaderSize + (mCardHeaderSize / 3), mCardBounds.top + (mCardHeaderSize / 2) - mTextBounds.exactCenterY(), mTextPaint);
         }
 
         // Draw child
