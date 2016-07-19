@@ -17,4 +17,5 @@ public interface DevicesChangeNotifyable {
      *                device.
      */
     void setDevices(List<Device> devices);
+    void setAngle(int angle);
 }

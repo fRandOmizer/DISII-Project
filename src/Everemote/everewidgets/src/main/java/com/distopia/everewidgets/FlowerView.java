@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -40,11 +39,11 @@ public class FlowerView extends View {
     private double mAngleOfMaxGrowth;
     private int mMarkedId = 0;
 
-    private int[] mIconData;
+    private FlowerData[] mFlowerData;
     private Drawable[] mIconDataDrawables;
-    private int arcCount = 10;
+    private float mAngleOffset = 0;
+    private int mArcCount = 0;
     private static Path[] mPathArray;
-    private Rect mTextBounds = new Rect();
 
     // Is informed on every new value update of this view.
     private OnUpdateListener mListener = null;
@@ -111,12 +110,12 @@ public class FlowerView extends View {
 
         mAngleOfMaxGrowth = DONT_GROW_ANGLE;
 
-        mIconData = new int[0];
+        mFlowerData = new FlowerData[0];
         mIconDataDrawables = new Drawable[0];
-        arcCount = mIconData.length;
+        mArcCount = mFlowerData.length;
 
-        mPathArray = new Path[arcCount];
-        for (int i = 0; i < arcCount; i++) {
+        mPathArray = new Path[mArcCount];
+        for (int i = 0; i < mArcCount; i++) {
             mPathArray[i] = new Path();
         }
     }
@@ -141,22 +140,25 @@ public class FlowerView extends View {
      * Setter for displayed icons
      * @param iconData
      */
-    public void setIconData(int[] iconData)
-    {
-        this.mIconData = iconData;
-        this.arcCount = this.mIconData.length;
+    public void setIconData(FlowerData[] iconData) {
+        this.mFlowerData = iconData;
+        this.mArcCount = this.mFlowerData.length;
 
-        this.mIconDataDrawables = new Drawable[this.mIconData.length];
-        for (int i = 0; i < this.mIconData.length; i++)
-        {
-            this.mIconDataDrawables[i] = getResources().getDrawable(this.mIconData[i], null);
+        this.mIconDataDrawables = new Drawable[this.mFlowerData.length];
+        for (int i = 0; i < this.mFlowerData.length; i++) {
+            this.mIconDataDrawables[i] = getResources().getDrawable(this.mFlowerData[i].iconId, null);
         }
 
-        mPathArray = new Path[arcCount];
-        for (int i = 0; i < arcCount; i++) {
+        mPathArray = new Path[mArcCount];
+        for (int i = 0; i < mArcCount; i++) {
             mPathArray[i] = new Path();
         }
 
+        this.invalidate();
+    }
+
+    public void setAngleOffset(float angleOffset) {
+        this.mAngleOffset = angleOffset;
         this.invalidate();
     }
 
@@ -209,13 +211,17 @@ public class FlowerView extends View {
         double growthFactor = (mMaxOuterRadius - mDefaultOuterRadius);
         boolean alreadyMarked = false;
 
-        for (int i = 0; i < arcCount; i++) {
+        for (int i = 0; i < mArcCount; i++) {
             mPathArray[i].reset();
             mPathArray[i].moveTo(mMidPoint.x, mMidPoint.y);
 
             int arcPartCount = 20;
-            double baseAngle = (360d / arcCount) * i;
-            double angleStep = (360d / arcCount) / arcPartCount;
+            double baseAngle = mAngleOffset + mFlowerData[i].startAngle; //(360d / mArcCount) * i + mAngleOffset;
+            double angleStep = Math.abs((mFlowerData[(i+1)%mFlowerData.length].startAngle - mFlowerData[i].startAngle) / arcPartCount);//(360d / mArcCount) / arcPartCount;
+            if (mFlowerData[(i+1)%mFlowerData.length].startAngle < mFlowerData[i].startAngle)
+            {
+                angleStep = (360 - mFlowerData[i].startAngle + mFlowerData[(i+1)%mFlowerData.length].startAngle) / arcPartCount;
+            }
             boolean marked = false;
 
             for (int j = 0; j <= arcPartCount; j++) {
@@ -235,7 +241,7 @@ public class FlowerView extends View {
             }
             canvas.drawPath(mPathArray[i], mSeparatorPaint);
 
-            double angle = (((360d / arcCount) * i) + ((360d / arcCount) * (i+1))) / 2d;
+            double angle = baseAngle + angleStep * arcPartCount / 2;
             double size = determineGrowthFactorForAngle(angle, mAngleOfMaxGrowth) * growthFactor;
             double minSize = Math.max((mDefaultOuterRadius - mInnerRadius)/2, size);
             float left = angleToCircleX(angle, (mInnerRadius+mDefaultOuterRadius)/2f + size/2, mMidPoint.x) - (float)minSize / 2;
@@ -248,13 +254,14 @@ public class FlowerView extends View {
 
             if (marked) {
                 mMarkedId = i;
+                System.out.println(i);
             }
         }
 
         // draw display area
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mInnerFillPaint);
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mSeparatorPaint);
-        if (mMarkedId < arcCount)
+        if (mMarkedId < mArcCount)
         {
             float size = mInnerRadius * 1.5f;
             float left = mMidPoint.x - size / 2;

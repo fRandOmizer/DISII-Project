@@ -26,6 +26,7 @@ import com.distopia.everemote.network.RaspiClient;
 import com.distopia.everewidgets.AbsoluteRegulatorView;
 import com.distopia.everewidgets.BannerSliderView;
 import com.distopia.everewidgets.CardView;
+import com.distopia.everewidgets.FlowerData;
 import com.distopia.everewidgets.FlowerView;
 import com.distopia.everewidgets.VolumeView;
 
@@ -34,14 +35,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable, FlowerView.OnUpdateListener {
     private static final String TAG               = "MainActivity";
-    private static final String TV_MIN_RANGE      = "20";
-    private static final String TV_MAX_RANGE      = "120";
-    private static final String LIGHT_MIN_RANGE   = "0";
-    private static final String LIGHT_MAX_RANGE   = "50";
+    private static final String TV_MIN_RANGE      = "0";
+    private static final String TV_MAX_RANGE      = "80";
+    private static final String LIGHT_MIN_RANGE   = "100";
+    private static final String LIGHT_MAX_RANGE   = "180";
     private static final String SHUTTER_MIN_RANGE = "140";
     private static final String SHUTTER_MAX_RANGE = "190";
-    private static final String SPEAKER_MIN_RANGE = "60";
-    private static final String SPEAKER_MAX_RANGE = "100";
+    private static final String SPEAKER_MIN_RANGE = "240";
+    private static final String SPEAKER_MAX_RANGE = "320";
 
     SharedPreferences sharedPreferences;
     OnSharedPreferenceChangeListener prefListener = new OnSharedPreferenceChangeListener() {
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     );
                 }
             }
+
+            updateMap();
         }
     };
 
@@ -101,14 +104,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     // manual map stuff
     int[] mapIds = {
             R.drawable.ic_tv_black_24dp,
-            R.drawable.ic_tv_black_24dp,
             R.drawable.ic_lightbulb_outline_black_24dp,
             R.drawable.ic_speaker_black_24dp
     };
 
     int[] cardsToShow = {
             R.id.tv_channels_card,
-            R.id.tv_volume_card,
             R.id.lights_onoff_card,
             R.id.speaker_volume_card,
     };
@@ -155,10 +156,10 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         sharedPreferences.registerOnSharedPreferenceChangeListener(prefListener);
 
         // Sets up all devices (hardcoded for now).
-        this.allDevices.add(light);
         this.allDevices.add(tv);
-        this.allDevices.add(shutter);
+        this.allDevices.add(light);
         this.allDevices.add(speaker);
+        this.allDevices.add(shutter);
 
         // Creates a new device finder (if possible) and registers itself as a subscriber.
         try {
@@ -208,8 +209,35 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
         // creates manual map
         FlowerView flower = (FlowerView) findViewById(R.id.flower);
-        flower.setIconData(mapIds);
+        updateMap();
         flower.setOnUpdateListener(this);
+    }
+
+    void updateMap() {
+        FlowerData[] flowerData = new FlowerData[mapIds.length];
+        for (int i = 0; i < flowerData.length; i++) {
+            FlowerData data = new FlowerData();
+            data.iconId = mapIds[i];
+            switch (i)
+            {
+                case 0:
+                    data.startAngle = tv.getAngleBeginning();
+                    data.endAngle = tv.getAngleEnd();
+                    break;
+                case 1:
+                    data.startAngle = light.getAngleBeginning();
+                    data.endAngle = light.getAngleEnd();
+                    break;
+                case 2:
+                    data.startAngle = speaker.getAngleBeginning();
+                    data.endAngle = speaker.getAngleEnd();
+                    break;
+            }
+            flowerData[i] = data;
+        }
+
+        FlowerView flower = (FlowerView) findViewById(R.id.flower);
+        flower.setIconData(flowerData);
     }
 
     @Override
@@ -249,6 +277,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        CardView mapCard = (CardView) findViewById(R.id.flower_card);
+
         switch (item.getItemId()) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -262,12 +292,15 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     item.setIcon(R.drawable.ic_lock_outline_white_24dp);
                 }
                 widgetsLocked = !widgetsLocked;
+
+                // hide manual selection
+                mapCard.setVisibility(View.GONE);
+
                 updateControlWidgets();
                 return true;
 
             case R.id.action_select:
                 // show manual selection
-                CardView mapCard = (CardView) findViewById(R.id.flower_card);
                 mapCard.setVisibility(View.VISIBLE);
                 mapCard.getParent().bringChildToFront(mapCard);
                 // lock card view
@@ -304,6 +337,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     public void setDevices(final List<Device> devices) {
         curDevices = devices;
         updateControlWidgets();
+    }
+
+    @Override
+    public void setAngle(int angle) {
+        FlowerView flower = (FlowerView) findViewById(R.id.flower);
+        flower.setAngleOffset(-angle - 90);
     }
 
     /**

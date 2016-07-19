@@ -146,6 +146,10 @@ public class DeviceFinder implements SensorEventListener {
             SensorManager.getRotationMatrixFromVector(rMat, event.values);
             // Gets the azimuth value (orientation[0]) in degrees.
             deviceAngle = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation )[0]) + 360) % 360;
+            // Informs all subscribers about the angle
+            for (DevicesChangeNotifyable subscriber : this.subscribers) {
+                subscriber.setAngle(deviceAngle);
+            }
             // Checks if we even need to consider an update.
             if(subscribersNeedUpdate()) {
                 // Gathers the new device list.
@@ -162,6 +166,7 @@ public class DeviceFinder implements SensorEventListener {
                     for (DevicesChangeNotifyable subscriber : this.subscribers) {
                         Log.i(TAG, "Informing subscriber " + subscriber);
                         subscriber.setDevices(newDevices);
+                        subscriber.setAngle(deviceAngle);
                     }
                     prevDevices = new ArrayList<Device>(newDevices);
                 }
