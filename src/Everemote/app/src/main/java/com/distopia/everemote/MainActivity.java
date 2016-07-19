@@ -36,14 +36,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable, FlowerView.OnUpdateListener {
     private static final String TAG               = "MainActivity";
-    private static final String TV_MIN_RANGE      = "0";
-    private static final String TV_MAX_RANGE      = "80";
-    private static final String LIGHT_MIN_RANGE   = "100";
-    private static final String LIGHT_MAX_RANGE   = "180";
-    private static final String SHUTTER_MIN_RANGE = "140";
-    private static final String SHUTTER_MAX_RANGE = "190";
-    private static final String SPEAKER_MIN_RANGE = "240";
-    private static final String SPEAKER_MAX_RANGE = "320";
+    private static final String TV_MIN_RANGE      = "30";
+    private static final String TV_MAX_RANGE      = "129";
+    private static final String LIGHT_MIN_RANGE   = "130";
+    private static final String LIGHT_MAX_RANGE   = "179";
+    private static final String SPEAKER_MIN_RANGE = "180";
+    private static final String SPEAKER_MAX_RANGE = "219";
+    private static final String SHUTTER_MIN_RANGE = "220";
+    private static final String SHUTTER_MAX_RANGE = "359";
 
     SharedPreferences sharedPreferences;
     OnSharedPreferenceChangeListener prefListener = new OnSharedPreferenceChangeListener() {
@@ -106,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     final private int[] mapIds = {
             R.drawable.ic_tv_black_24dp,
             R.drawable.ic_lightbulb_outline_black_24dp,
-            R.drawable.ic_speaker_black_24dp
+            R.drawable.ic_speaker_black_24dp,
+            R.drawable.ic_thermometer_lines_black_24dp
     };
 
     private HashMap<Integer, int[]> idToCard = new HashMap<>();
@@ -117,10 +118,11 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     private TV tv = new TV(Integer.valueOf(TV_MIN_RANGE),
                                            Integer.valueOf(TV_MAX_RANGE),
                                            raspiClient);
-    private int[] channelImages = {R.drawable.das_erste_s, R.drawable.zdf_s, R.drawable.rtl_s};
+    private int[] channelImages = {R.drawable.das_erste_s, R.drawable.zdf_s, R.drawable.wdr_s, R.drawable.phoenix_s};
     private Channel[] channels = {new Channel("Das Erste", 1),
                                   new Channel("ZDF", 2),
-                                  new Channel("RTL", 3)};
+                                  new Channel("WDR", 3),
+                                  new Channel("Phoenix", 4)};
 
     /**
      * Light.
@@ -158,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         // Sets up all devices (hardcoded for now).
         this.allDevices.add(tv);
         this.allDevices.add(light);
-        this.allDevices.add(speaker);
         this.allDevices.add(shutter);
+        this.allDevices.add(speaker);
 
         // Creates a new device finder (if possible) and registers itself as a subscriber.
         try {
@@ -208,12 +210,13 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
 
         // Sets the shutter controls.
-        AbsoluteRegulatorView shutterView = null;//(AbsoluteRegulatorView) findViewById(R.id.shutter);
+        AbsoluteRegulatorView shutterView = (AbsoluteRegulatorView) findViewById(R.id.shutter);
         if (shutterView != null) {
             shutterView.setOnUpdateListener(new AbsoluteRegulatorView.OnUpdateListener() {
                 @Override
                 public void onUpdate(float value) {
-                    shutter.getShutterControl().setTargetValue(value);
+                    // Not yet implemented!
+                    //shutter.getShutterControl().setTargetValue(value);
                 }
             });
         }
@@ -222,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         idToCard.put(R.drawable.ic_tv_black_24dp, new int[]{R.id.tv_channels_card, R.id.tv_volume_card, R.id.tv_onoff_card});
         idToCard.put(R.drawable.ic_lightbulb_outline_black_24dp, new int[]{R.id.lights_onoff_card});
         idToCard.put(R.drawable.ic_speaker_black_24dp, new int[]{R.id.speaker_volume_card});
+        idToCard.put(R.drawable.ic_thermometer_lines_black_24dp, new int[]{R.id.shutter_card});
 
         FlowerView flower = (FlowerView) findViewById(R.id.flower);
         updateMap();
@@ -247,12 +251,17 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     data.startAngle = speaker.getAngleBeginning();
                     data.endAngle = speaker.getAngleEnd();
                     break;
+                case 3:
+                    data.startAngle = shutter.getAngleBeginning();
+                    data.endAngle = shutter.getAngleEnd();
+                    break;
             }
             flowerData[i] = data;
         }
 
         FlowerView flower = (FlowerView) findViewById(R.id.flower);
         flower.setIconData(flowerData);
+        flower.invalidate();
     }
 
     @Override
@@ -341,8 +350,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 tvOnOffCard.setVisibility(View.GONE);
                 CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
                 lightOnOffCard.setVisibility(View.GONE);
-                //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
-                //shutterCard.setVisibility(View.GONE);
+                CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
+                shutterCard.setVisibility(View.GONE);
                 CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
                 speakerVolumeCard.setVisibility(View.GONE);
                 return true;
@@ -390,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
                     CardView tvOnOffCard = (CardView) findViewById(R.id.tv_onoff_card);
                     CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
-                    //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
+                    CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
                     CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
                     if (tvChannelsCard != null) {
                         tvChannelsCard.setVisibility(View.GONE);
@@ -404,9 +413,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                     if (lightOnOffCard != null) {
                         lightOnOffCard.setVisibility(View.GONE);
                     }
-                    /*if (shutterCard != null) {
+                    if (shutterCard != null) {
                         shutterCard.setVisibility(View.GONE);
-                    }*/
+                    }
                     if (speakerVolumeCard != null) {
                         speakerVolumeCard.setVisibility(View.GONE);
                     }
@@ -422,10 +431,11 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                         } else if (deviceInRange instanceof Light && lightOnOffCard != null) {
                             lightOnOffCard.setVisibility(View.VISIBLE);
                             lightOnOffCard.getParent().bringChildToFront(lightOnOffCard);
-                        } /*else if (deviceInRange instanceof Shutter && shutterCard != null) {
+                        } else if (deviceInRange instanceof Shutter && shutterCard != null) {
+                            Log.i(TAG, "GETTING SHUTTER HEEEY");
                             shutterCard.setVisibility(View.VISIBLE);
                             shutterCard.getParent().bringChildToFront(shutterCard);
-                        }*/ else if (deviceInRange instanceof Speaker && speakerVolumeCard != null) {
+                        } else if (deviceInRange instanceof Speaker && speakerVolumeCard != null) {
                             speakerVolumeCard.setVisibility(View.VISIBLE);
                             speakerVolumeCard.getParent().bringChildToFront(speakerVolumeCard);
                         }
@@ -444,14 +454,8 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         if (lightButton != null) {
             if (light.isOn()) {
                 lightButton.setImageResource(R.drawable.lightbulb_off);
-                if (raspiClient != null) {
-                    raspiClient.sendMessage("LightOff");
-                }
             } else {
                 lightButton.setImageResource(R.drawable.lightbulb_on);
-                if (raspiClient != null) {
-                    raspiClient.sendMessage("LightOn");
-                }
             }
         }
         light.toggleLight();
@@ -473,7 +477,6 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 tv.getOnOffControl().turnOn();
             }
         }
-        light.toggleLight();
     }
 
     public class ConnectTask extends AsyncTask<String,String,RaspiClient> {

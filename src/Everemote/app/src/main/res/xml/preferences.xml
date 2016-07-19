@@ -10,14 +10,14 @@
             android:title="@string/min_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="20" />
+            android:defaultValue="30" />
 
         <EditTextPreference
             android:key="tv_max_range"
             android:title="@string/max_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="120" />
+            android:defaultValue="129" />
 
     </PreferenceCategory>
 
@@ -30,14 +30,14 @@
             android:title="@string/min_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="0" />
+            android:defaultValue="130" />
 
         <EditTextPreference
             android:key="light_max_range"
             android:title="@string/max_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="50" />
+            android:defaultValue="179" />
 
     </PreferenceCategory>
 
@@ -50,14 +50,14 @@
             android:title="@string/min_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="140" />
+            android:defaultValue="220" />
 
         <EditTextPreference
             android:key="shutter_max_range"
             android:title="@string/max_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="190" />
+            android:defaultValue="29" />
 
     </PreferenceCategory>
 
@@ -70,14 +70,14 @@
             android:title="@string/min_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="60" />
+            android:defaultValue="180" />
 
         <EditTextPreference
             android:key="speaker_max_range"
             android:title="@string/max_range"
             android:numeric="integer"
             android:maxLength="3"
-            android:defaultValue="100" />
+            android:defaultValue="219" />
 
     </PreferenceCategory>
 

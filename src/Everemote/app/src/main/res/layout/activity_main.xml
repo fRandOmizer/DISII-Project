@@ -55,6 +55,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/tv"
                 android:scaleType="fitCenter"
+                android:padding="16dp"
                 android:id="@+id/tv_onoff"
                 android:onClick="toggleTv"/>
 
@@ -130,11 +131,12 @@
                 android:contentDescription="@string/lightbulb"
                 android:scaleType="fitCenter"
                 android:id="@+id/lights_onoff"
+                android:padding="16dp"
                 android:onClick="toggleLights"/>
 
         </com.distopia.everewidgets.CardView>
 
-        <!--<com.distopia.everewidgets.CardView
+        <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:headerText="Shutters"
@@ -148,20 +150,20 @@
                 android:background="#ccc"
                 android:paddingBottom="40dp"
                 android:paddingLeft="20dp"
-                app:minValue="0"
-                app:maxValue="100"
+                app:minValue="15"
+                app:maxValue="35"
                 app:currentValueColor="#000000"
                 app:targetValueColor="#000000"
-                app:minImage="@drawable/window"
-                app:maxImage="@drawable/shutter"
-                app:unit="%"
+                app:minImage="@drawable/thermometer_min"
+                app:maxImage="@drawable/thermometer_max"
+                app:unit="°C"
                 app:indicatorLineSize="10"
-                app:orientation="1"
+                app:orientation="0"
                 app:indicatorTextSize="70"
                 android:layout_gravity="center"
                 android:id="@+id/shutter" />
 
-        </com.distopia.everewidgets.CardView>-->
+        </com.distopia.everewidgets.CardView>
 
     </com.distopia.everewidgets.CardLayout>
 

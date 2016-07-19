@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -210,12 +211,12 @@ public class FlowerView extends View {
         // calculate growth
         double growthFactor = (mMaxOuterRadius - mDefaultOuterRadius);
         boolean alreadyMarked = false;
-
+        Log.e("flower","----------BLABLABLA---------");
         for (int i = 0; i < mArcCount; i++) {
             mPathArray[i].reset();
             mPathArray[i].moveTo(mMidPoint.x, mMidPoint.y);
 
-            int arcPartCount = 20;
+            double arcPartCount = 20;
             double baseAngle = mAngleOffset + mFlowerData[i].startAngle; //(360d / mArcCount) * i + mAngleOffset;
             double angleStep = Math.abs((mFlowerData[(i+1)%mFlowerData.length].startAngle - mFlowerData[i].startAngle) / arcPartCount);//(360d / mArcCount) / arcPartCount;
             if (mFlowerData[(i+1)%mFlowerData.length].startAngle < mFlowerData[i].startAngle)
