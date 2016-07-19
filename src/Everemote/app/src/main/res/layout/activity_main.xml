@@ -139,15 +139,14 @@
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:headerText="Shutters"
+            app:headerText="Air conditioner"
             app:colorBackground="@color/card_shutter"
-            app:iconDrawable="@drawable/ic_view_headline_black_24dp"
+            app:iconDrawable="@drawable/ic_thermometer_lines_black_24dp"
             android:id="@+id/shutter_card">
 
             <com.distopia.everewidgets.AbsoluteRegulatorView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ccc"
                 android:paddingBottom="40dp"
                 android:paddingLeft="20dp"
                 app:minValue="15"
