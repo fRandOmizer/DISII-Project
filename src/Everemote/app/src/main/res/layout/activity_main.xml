@@ -93,7 +93,7 @@
             <com.distopia.everewidgets.VolumeView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/volume" />
+                android:id="@+id/tv_volume" />
 
         </com.distopia.everewidgets.CardView>
 

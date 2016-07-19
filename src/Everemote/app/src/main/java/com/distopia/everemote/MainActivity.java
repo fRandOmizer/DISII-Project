@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
 
         // Sets the TV volume controls.
-        VolumeView tvVolumeView = (VolumeView) findViewById(R.id.tv_volume_card);
+        VolumeView tvVolumeView = (VolumeView) findViewById(R.id.tv_volume);
         if (tvVolumeView != null) {
             tvVolumeView.setOnUpdateListener(new VolumeView.OnUpdateListener() {
                 @Override
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
 
         // Sets the volume controls.
-        VolumeView volumeView = (VolumeView) findViewById(R.id.volume);
+        VolumeView volumeView = (VolumeView) findViewById(R.id.speaker_volume);
         if (volumeView != null) {
             volumeView.setOnUpdateListener(new VolumeView.OnUpdateListener() {
                 @Override
