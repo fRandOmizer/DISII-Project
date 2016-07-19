@@ -40,7 +40,9 @@ public class TVChannelControlProxy extends RaspiControlProxy implements IChannel
 
     @Override
     public void setCurrentChannel(Channel newChannel) {
-        
+        if (raspiClient != null) {
+            raspiClient.sendMessage("TVSetChannel:"+ newChannel.getChannelNumber());
+        }
         Log.i(TAG, "Changed channel to " + newChannel);
     }
 
