@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,8 +38,10 @@ public class FlowerView extends View {
     private double mFirstContactX;
     private double mFirstContactY;
     private double mAngleOfMaxGrowth;
-    private String mMarkedText = "0";
+    private int mMarkedId = 0;
 
+    private int[] mIconData;
+    private Drawable[] mIconDataDrawables;
     private int arcCount = 10;
     private static Path[] mPathArray;
     private Rect mTextBounds = new Rect();
@@ -108,6 +111,10 @@ public class FlowerView extends View {
 
         mAngleOfMaxGrowth = DONT_GROW_ANGLE;
 
+        mIconData = new int[0];
+        mIconDataDrawables = new Drawable[0];
+        arcCount = mIconData.length;
+
         mPathArray = new Path[arcCount];
         for (int i = 0; i < arcCount; i++) {
             mPathArray[i] = new Path();
@@ -128,6 +135,29 @@ public class FlowerView extends View {
         mInnerRadius = mDefaultOuterRadius / 2f;
 
         mMidPoint = new Point(width / 2, height / 2);
+    }
+
+    /**
+     * Setter for displayed icons
+     * @param iconData
+     */
+    public void setIconData(int[] iconData)
+    {
+        this.mIconData = iconData;
+        this.arcCount = this.mIconData.length;
+
+        this.mIconDataDrawables = new Drawable[this.mIconData.length];
+        for (int i = 0; i < this.mIconData.length; i++)
+        {
+            this.mIconDataDrawables[i] = getResources().getDrawable(this.mIconData[i], null);
+        }
+
+        mPathArray = new Path[arcCount];
+        for (int i = 0; i < arcCount; i++) {
+            mPathArray[i] = new Path();
+        }
+
+        this.invalidate();
     }
 
     /**
@@ -207,22 +237,33 @@ public class FlowerView extends View {
 
             double angle = (((360d / arcCount) * i) + ((360d / arcCount) * (i+1))) / 2d;
             double size = determineGrowthFactorForAngle(angle, mAngleOfMaxGrowth) * growthFactor;
-            mTextPaint.setTextSize(Math.max((float)size*1.5f, (mDefaultOuterRadius - mInnerRadius)/2));
-            String label = Integer.toString(i);
-            mTextPaint.getTextBounds(label, 0, label.length(), mTextBounds);
-            canvas.drawText(label, angleToCircleX(angle, (mInnerRadius+mDefaultOuterRadius+size)/2f, mMidPoint.x) - mTextBounds.exactCenterX(), angleToCircleY(angle, (mInnerRadius+mDefaultOuterRadius+size)/2f, mMidPoint.y) - mTextBounds.exactCenterY(), mTextPaint);
+            double minSize = Math.max((mDefaultOuterRadius - mInnerRadius)/2, size);
+            float left = angleToCircleX(angle, (mInnerRadius+mDefaultOuterRadius)/2f + size/2, mMidPoint.x) - (float)minSize / 2;
+            float top = angleToCircleY(angle, (mInnerRadius+mDefaultOuterRadius)/2f + size/2, mMidPoint.y) - (float)minSize / 2;
+            float right = left + (float)minSize;
+            float bottom = top + (float)minSize;
+            mIconDataDrawables[i].setBounds((int)left, (int)top, (int)right, (int)bottom);
+            mIconDataDrawables[i].draw(canvas);
+
 
             if (marked) {
-                mMarkedText = label;
+                mMarkedId = i;
             }
         }
 
         // draw display area
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mInnerFillPaint);
         canvas.drawCircle(mMidPoint.x, mMidPoint.y, mInnerRadius, mSeparatorPaint);
-        mTextPaint.setTextSize(mInnerRadius * 2);
-        mTextPaint.getTextBounds(mMarkedText, 0, mMarkedText.length(), mTextBounds);
-        canvas.drawText(mMarkedText, mMidPoint.x - mTextBounds.exactCenterX(), mMidPoint.y - mTextBounds.exactCenterY(), mTextPaint);
+        if (mMarkedId < arcCount)
+        {
+            float size = mInnerRadius * 1.5f;
+            float left = mMidPoint.x - size / 2;
+            float top = mMidPoint.y  - size / 2;
+            float right = left + size;
+            float bottom = top + size;
+            mIconDataDrawables[mMarkedId].setBounds((int)left, (int)top, (int)right, (int)bottom);
+            mIconDataDrawables[mMarkedId].draw(canvas);
+        }
     }
 
     /**
@@ -251,9 +292,8 @@ public class FlowerView extends View {
         else if (event.getAction() == MotionEvent.ACTION_UP) {
             mAngleOfMaxGrowth = DONT_GROW_ANGLE;
             invalidate();
-            // TODO: Check if this makes sense here!
             if(mListener != null) {
-                mListener.onUpdate(mMarkedText);
+                mListener.onUpdate(mMarkedId);
             }
             return true;
         }
@@ -274,6 +314,6 @@ public class FlowerView extends View {
          * Is called when the flower view updates its value.
          * @param value The value the user selected.
          */
-        void onUpdate(String value);
+        void onUpdate(int value);
     }
 }
