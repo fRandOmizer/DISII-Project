@@ -123,7 +123,13 @@ public class RaspiServerGUI extends JFrame
                 System.out.println("TV channel down");
               }
               // speaker
-
+              else if (message.contains("SpeakerSetVolume"))
+              {
+                int value = getMessageValue(message);
+                int volume = mapToRange(value, 0, 100, -10239, 400);
+                Runtime.getRuntime().exec("./setVolume.sh " + volume);
+                System.out.println("Speaker volume set to" + Integer.toString(value));
+              }
               // shutter
             }
             catch (IOException e)
@@ -182,4 +188,8 @@ public class RaspiServerGUI extends JFrame
       }
     }
   }
+  
+  private int mapToRange(int value, int inMin, int inMax, int outMin, int outMax) {
+    return outMin + ((outMax - outMin) / (inMax - inMin)) * (value - inMin);
+}
 }
