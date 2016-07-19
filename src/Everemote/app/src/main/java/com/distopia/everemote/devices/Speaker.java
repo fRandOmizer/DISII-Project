@@ -1,12 +1,13 @@
 package com.distopia.everemote.devices;
 
 import com.distopia.everemote.devices.controls.SpeakerControlProxy;
+import com.distopia.everemote.network.RaspiClient;
 
 /**
  *
  * Created by chris on 11.07.2016.
  */
-public class Speaker extends Device {
+public class Speaker extends RaspiDevice {
 
     // controls
     private SpeakerControlProxy speakerControl;
@@ -14,8 +15,9 @@ public class Speaker extends Device {
     /**
      * Creates a new speaker object.
      */
-    public Speaker() {
-        speakerControl = new SpeakerControlProxy();
+    public Speaker(RaspiClient raspi) {
+        super(raspi);
+        speakerControl = new SpeakerControlProxy(raspi);
         addControl(speakerControl);
     }
 
@@ -24,9 +26,9 @@ public class Speaker extends Device {
      * @param angleBeginning The angle in which the beginning of the speaker is located.
      * @param angleEnd The angle in which the end of the speaker is located.
      */
-    public Speaker(int angleBeginning, int angleEnd) {
-        super(angleBeginning, angleEnd);
-        speakerControl = new SpeakerControlProxy();
+    public Speaker(int angleBeginning, int angleEnd, RaspiClient raspi) {
+        super(angleBeginning, angleEnd, raspi);
+        speakerControl = new SpeakerControlProxy(raspi);
         addControl(speakerControl);
     }
 
