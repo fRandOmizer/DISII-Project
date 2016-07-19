@@ -58,7 +58,9 @@ public class CardLayout extends ViewGroup {
      * Initialize anything needed
      */
     private void init() {
-        vibrator = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (!this.isInEditMode()) {
+            vibrator = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        }
     }
 
     /**
@@ -128,8 +130,8 @@ public class CardLayout extends ViewGroup {
             final View child = getChildAt(i);
 
             if (child.getVisibility() != GONE) {
-                mTmpContainerRect.left = 0;
-                mTmpContainerRect.right = middleRight;
+                mTmpContainerRect.left = getPaddingLeft() + (mBoxHeaderSize / count) * ((count - i) - 1);
+                mTmpContainerRect.right = middleRight - getPaddingRight() - (mBoxHeaderSize / count) * ((count - i) - 1);
 
                 mTmpContainerRect.top = top + (mBoxHeaderSize - cardOffsetFactor * (count - i)) - cardOffsetManualChange * i;
                 mTmpContainerRect.bottom = parentBottom - cardOffsetFactor * (count - i) - cardOffsetManualChange * i;
@@ -283,7 +285,7 @@ public class CardLayout extends ViewGroup {
             cardOffsetManualChange = 0;
 
             // more than one card
-            if (countWithoutInvisible > 1) {
+            if (countWithoutInvisible > 1 && !this.isInEditMode()) {
 
                 long[] pattern = new long[countWithoutInvisible*2];
 
