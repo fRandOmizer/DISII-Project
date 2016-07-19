@@ -133,7 +133,9 @@ public class AbsoluteRegulatorView extends View {
         a.recycle();
 
         // add vibrator
-        vibrator = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (!this.isInEditMode()) {
+            vibrator = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        }
 
         // Set up a default TextPaint object
         mTextPaint = new TextPaint();
@@ -261,10 +263,14 @@ public class AbsoluteRegulatorView extends View {
     public void setTargetValue(float targetValue) {
         if (targetValue < minValue) {
             this.targetValue = minValue;
-            vibrator.vibrate(2);
+            if (!this.isInEditMode()) {
+                vibrator.vibrate(2);
+            }
         } else if (targetValue > maxValue) {
             this.targetValue = maxValue;
-            vibrator.vibrate(2);
+            if (!this.isInEditMode()) {
+                vibrator.vibrate(2);
+            }
         } else {
             this.targetValue = targetValue;
         }
