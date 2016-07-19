@@ -26,6 +26,22 @@
         <com.distopia.everewidgets.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/flower_card"
+            android:visibility="gone"
+            app:headerText="Manual Selection"
+            app:colorBackground="@color/card_map"
+            app:iconDrawable="@drawable/ic_explore_white_24dp">
+
+            <com.distopia.everewidgets.FlowerView
+                android:id="@+id/flower"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.distopia.everewidgets.CardView>
+
+        <com.distopia.everewidgets.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/tv_channels_card"
             android:visibility="gone"
             app:headerText="Channels"

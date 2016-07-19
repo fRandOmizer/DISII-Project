@@ -8,5 +8,6 @@
     <color name="card_speaker">#DCE8EB</color>
     <color name="card_shutter">#F7F9FE</color>
     <color name="card_pc">#DCE8EB</color>
+    <color name="card_map">#FFFFFF</color>
     <color name="black">#ffffff</color>
 </resources>

@@ -26,12 +26,13 @@ import com.distopia.everemote.network.RaspiClient;
 import com.distopia.everewidgets.AbsoluteRegulatorView;
 import com.distopia.everewidgets.BannerSliderView;
 import com.distopia.everewidgets.CardView;
+import com.distopia.everewidgets.FlowerView;
 import com.distopia.everewidgets.VolumeView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable {
+public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable, FlowerView.OnUpdateListener {
     private static final String TAG               = "MainActivity";
     private static final String TV_MIN_RANGE      = "20";
     private static final String TV_MAX_RANGE      = "120";
@@ -95,6 +96,22 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
 
     /// Whether the widget screen is currently locked or not.
     private boolean widgetsLocked = false;
+    private MenuItem lockItem = null;
+
+    // manual map stuff
+    int[] mapIds = {
+            R.drawable.ic_tv_black_24dp,
+            R.drawable.ic_tv_black_24dp,
+            R.drawable.ic_lightbulb_outline_black_24dp,
+            R.drawable.ic_speaker_black_24dp
+    };
+
+    int[] cardsToShow = {
+            R.id.tv_channels_card,
+            R.id.tv_volume_card,
+            R.id.lights_onoff_card,
+            R.id.speaker_volume_card,
+    };
 
     /**
      * TV.
@@ -188,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 }
             });
         }
+
+        // creates manual map
+        FlowerView flower = (FlowerView) findViewById(R.id.flower);
+        flower.setIconData(mapIds);
+        flower.setOnUpdateListener(this);
     }
 
     @Override
@@ -220,6 +242,12 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        lockItem = menu.findItem(R.id.action_lock);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
@@ -238,11 +266,38 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 return true;
 
             case R.id.action_select:
+                // show manual selection
+                CardView mapCard = (CardView) findViewById(R.id.flower_card);
+                mapCard.setVisibility(View.VISIBLE);
+                mapCard.getParent().bringChildToFront(mapCard);
+                // lock card view
+                widgetsLocked = true;
+                lockItem.setIcon(R.drawable.ic_lock_outline_white_24dp);
+                // remove anything else from card view
+                CardView tvChannelsCard = (CardView) findViewById(R.id.tv_channels_card);
+                tvChannelsCard.setVisibility(View.GONE);
+                CardView tvVolumeCard = (CardView) findViewById(R.id.tv_volume_card);
+                tvVolumeCard.setVisibility(View.GONE);
+                CardView lightOnOffCard = (CardView) findViewById(R.id.lights_onoff_card);
+                lightOnOffCard.setVisibility(View.GONE);
+                //CardView shutterCard = (CardView) findViewById(R.id.shutter_card);
+                //shutterCard.setVisibility(View.GONE);
+                CardView speakerVolumeCard = (CardView) findViewById(R.id.speaker_volume_card);
+                speakerVolumeCard.setVisibility(View.GONE);
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onUpdate(int value) {
+        CardView mapCard = (CardView) findViewById(R.id.flower_card);
+        mapCard.setVisibility(View.GONE);
+
+        CardView cardToShow = (CardView) findViewById(cardsToShow[value]);
+        cardToShow.setVisibility(View.VISIBLE);
     }
 
     @Override
