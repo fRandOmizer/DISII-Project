@@ -33,6 +33,8 @@ import com.distopia.everewidgets.VolumeView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements DevicesChangeNotifyable, FlowerView.OnUpdateListener {
     private static final String TAG               = "MainActivity";
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
         }
 
         // Sets the shutter controls.
-        AbsoluteRegulatorView shutterView = (AbsoluteRegulatorView) findViewById(R.id.shutter);
+        final AbsoluteRegulatorView shutterView = (AbsoluteRegulatorView) findViewById(R.id.shutter);
         if (shutterView != null) {
             shutterView.setOnUpdateListener(new AbsoluteRegulatorView.OnUpdateListener() {
                 @Override
@@ -220,6 +222,31 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
                 }
             });
         }
+
+        // timer which simulates linear regulator to increase current value
+        final MainActivity a = this;
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        float cur = Math.round(shutterView.getCurrentValue() * 10) / 10.0f;
+                        float tar = Math.round(shutterView.getTargetValue() * 10) / 10.0f;
+                        if (cur < tar) {
+                            shutterView.setCurrentValue(cur += 0.1);
+                        }
+                        if (cur > tar) {
+                            shutterView.setCurrentValue(cur -= 0.1);
+                        }
+                    }
+                });
+            }
+        };
+
+        timer.schedule(task, 1000, 1000); // every second
+
 
         // creates manual map
         idToCard.put(R.drawable.ic_tv_black_24dp, new int[]{R.id.tv_channels_card, R.id.tv_volume_card, R.id.tv_onoff_card});
