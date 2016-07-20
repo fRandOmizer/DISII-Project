@@ -126,9 +126,8 @@ public class RaspiServerGUI extends JFrame
               else if (message.contains("SpeakerSetVolume"))
               {
                 int value = getMessageValue(message);
-                int volume = mapToRange(value, 0, 100, -10239, 400);
-                Runtime.getRuntime().exec("./setVolume.sh " + volume);
-                System.out.println("Speaker volume set to" + Integer.toString(value));
+                Runtime.getRuntime().exec("./setVolume.sh " + value + "%");
+                System.out.println("Speaker volume set to " + Integer.toString(value));
               }
               // shutter
             }
@@ -165,7 +164,7 @@ public class RaspiServerGUI extends JFrame
   
   private int getMessageValue(String message)
   {
-    String value = message.substring(message.indexOf(":"));
+    String value = message.substring(message.indexOf(":")+1);
     value = value.trim();
     return Integer.parseInt(value);
   }
@@ -189,7 +188,8 @@ public class RaspiServerGUI extends JFrame
     }
   }
   
-  private int mapToRange(int value, int inMin, int inMax, int outMin, int outMax) {
-    return outMin + ((outMax - outMin) / (inMax - inMin)) * (value - inMin);
-}
+  int map(int x, int in_min, int in_max, int out_min, int out_max)
+  {
+   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
 }

@@ -42,10 +42,18 @@ public class IRTV
     {
       // if (p.getSystemPortName().equals("COM3")) //for windows...
       // if (p.getSystemPortName().equals("/dev/ttyAMA0")) //for pi rx tx
-      if (p.getSystemPortName().equals("/dev/ttyUSB0")) // for pi USB
+      if (p.getSystemPortName().equals("/dev/ttyACM0")) // for pi USB
       {
         selectedPort = p;
       }
+    }
+    
+    if (selectedPort == null)
+    {
+    	if (computerPorts.length > 1)
+    	{
+    		selectedPort = computerPorts[1];
+    	}
     }
 
     // Try to open port
@@ -162,6 +170,12 @@ public class IRTV
       for (int i = (toset - volume); i > 0; i--)
       {
         volumec.decrease();
+        try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
       }
     }
     else
@@ -169,6 +183,12 @@ public class IRTV
       for (int i = (volume - toset); i > 0; i--)
       {
         volumec.increase();
+        try {
+        	Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
       }
     }
     volume = toset;

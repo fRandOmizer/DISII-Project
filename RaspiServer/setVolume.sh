@@ -1,1 +1,1 @@
-amixer cset numid=1 -- -$1
+amixer cset numid=1 -- $1
