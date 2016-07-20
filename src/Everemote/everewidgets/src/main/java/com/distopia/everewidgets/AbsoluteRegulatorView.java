@@ -312,11 +312,11 @@ public class AbsoluteRegulatorView extends View {
         imageMax = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bmMax, w, h, false));
 
         if (orientation == TOP_TO_BOTTOM) {
-            imageMin.setGravity(Gravity.TOP + Gravity.FILL);
-            imageMax.setGravity(Gravity.TOP + Gravity.FILL_HORIZONTAL);
+            imageMin.setGravity(Gravity.TOP);
+            imageMax.setGravity(Gravity.TOP);
         } else {
-            imageMin.setGravity(Gravity.BOTTOM + Gravity.FILL);
-            imageMax.setGravity(Gravity.BOTTOM + Gravity.FILL_HORIZONTAL);
+            imageMin.setGravity(Gravity.BOTTOM);
+            imageMax.setGravity(Gravity.BOTTOM);
         }
 
         ClipDrawable clippy;
