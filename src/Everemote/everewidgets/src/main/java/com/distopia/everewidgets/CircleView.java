@@ -38,6 +38,8 @@ public class CircleView extends View {
 
     // Is informed on every new value update of this view.
     private OnUpdateListener mListener = null;
+    private int mMin = 0;
+    private int mMax = 1000;
 
     /**
      * Creates a new circle view
@@ -125,7 +127,7 @@ public class CircleView extends View {
         canvas.drawArc(mMidPoint.x - mMaxOuterRadius, mMidPoint.y - mMaxOuterRadius, mMidPoint.x + mMaxOuterRadius, mMidPoint.y + mMaxOuterRadius, -90, (float) mAngle, true, mOuterFillPaint);
 
         // draw display area
-        mText = Integer.toString((int) mAngle);
+        mText = Integer.toString((int) (mMin + (mMax - mMin) / 360f * mAngle));
         mTextPaint.setTextSize(mInnerRadius * 2);
         mTextPaint.getTextBounds(mText, 0, mText.length(), mTextBounds);
         canvas.drawText(mText, mMidPoint.x - mTextBounds.exactCenterX(), mMidPoint.y - mTextBounds.exactCenterY(), mTextPaint);
@@ -173,7 +175,7 @@ public class CircleView extends View {
 
             // TODO: Check if this makes sense here!
             if(mListener != null) {
-                mListener.onUpdate((int) mAngle);
+                mListener.onUpdate((int) (mMin + (mMax - mMin) / 360f * mAngle));
             }
 
             invalidate();
@@ -182,6 +184,24 @@ public class CircleView extends View {
         }
 
         return false;
+    }
+
+    /**
+     * Set mininmal value
+     * @param min
+     */
+    public void setMin(int min)
+    {
+        this.mMin = min;
+    }
+
+    /**
+     * Set maximal value
+     * @param max
+     */
+    public void setMax(int max)
+    {
+        this.mMax = max;
     }
 
     public void setOnUpdateListener(OnUpdateListener listener) {
