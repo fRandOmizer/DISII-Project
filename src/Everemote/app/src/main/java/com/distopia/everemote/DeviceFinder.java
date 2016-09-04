@@ -38,6 +38,7 @@ public class DeviceFinder implements SensorEventListener {
     private List<Device> devices = new ArrayList<>();
     /// The current device angle.
     private int deviceAngle = 0;
+    private int angleOffset = 0;
     /// The previous device angle (To be more efficient in the updating process).
     private int prevDeviceAngle = 1;
     /// The last time an update was sent to the subscribers.
@@ -150,6 +151,8 @@ public class DeviceFinder implements SensorEventListener {
             for (DevicesChangeNotifyable subscriber : this.subscribers) {
                 subscriber.setAngle(deviceAngle);
             }
+            deviceAngle = (deviceAngle + (360 - angleOffset))%360;
+
             // Checks if we even need to consider an update.
             if(subscribersNeedUpdate()) {
                 // Gathers the new device list.
@@ -174,6 +177,11 @@ public class DeviceFinder implements SensorEventListener {
                 lastUpdate = new Date();
             }
         }
+    }
+
+    public void setAngleOffset(int offset)
+    {
+        angleOffset = offset;
     }
 
     /**

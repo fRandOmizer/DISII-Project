@@ -211,7 +211,7 @@ public class FlowerView extends View {
         // calculate growth
         double growthFactor = (mMaxOuterRadius - mDefaultOuterRadius);
         boolean alreadyMarked = false;
-        Log.e("flower","----------BLABLABLA---------");
+
         for (int i = 0; i < mArcCount; i++) {
             mPathArray[i].reset();
             mPathArray[i].moveTo(mMidPoint.x, mMidPoint.y);

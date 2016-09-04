@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     private static final String SHUTTER_MIN_RANGE = "220";
     private static final String SHUTTER_MAX_RANGE = "359";
 
+    private int angle = 0;
+    private int angleOffset = 0;
+
     SharedPreferences sharedPreferences;
     OnSharedPreferenceChangeListener prefListener = new OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -410,7 +413,19 @@ public class MainActivity extends AppCompatActivity implements DevicesChangeNoti
     @Override
     public void setAngle(int angle) {
         FlowerView flower = (FlowerView) findViewById(R.id.flower);
-        flower.setAngleOffset(360 -angle - 90);
+        this.angle = angle;
+        flower.setAngleOffset(360 - (angle - this.angleOffset) - 90);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        System.out.println(this.angle);
+        FlowerView flower = (FlowerView) findViewById(R.id.flower);
+        angleOffset = angle;
+        flower.setAngleOffset(360 - (angle - this.angleOffset) - 90);
+        deviceFinder.setAngleOffset(angleOffset);
+        //super.onBackPressed();
     }
 
     /**
