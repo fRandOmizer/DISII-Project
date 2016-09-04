@@ -161,6 +161,15 @@ public class IRTV
 			for (int i= (toset - volume);i>0;i--)
 					{
 						volumec.decrease();
+						try 
+						{
+							Thread.sleep(100);
+						}catch (IOException e)
+						{
+							System.out.println("Fehler beim Warten");
+						}
+
+
 					}
 		}
 		else
@@ -168,6 +177,13 @@ public class IRTV
 			for (int i= (volume - toset); i>0; i--)
 					{
 						volumec.increase();
+						try 
+						{
+							Thread.sleep(100);
+						}catch (IOException e)
+						{
+								System.out.println("Fehler beim Warten");
+						}
 					}
 		}
 		volume = toset;
