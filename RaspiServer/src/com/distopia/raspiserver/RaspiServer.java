@@ -1,6 +1,9 @@
 package com.distopia.raspiserver;
 
 import javax.swing.*;
+
+import com.distopia.raspiserver.RaspiServer.OnMessageReceived;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -69,44 +72,15 @@ public class RaspiServer extends Thread
       // over the network.
       ServerSocket serverSocket = new ServerSocket(SERVERPORT);
 
+      // while for multiple clients
+      while(running)
+      {
+      
       // create client socket... the method accept() listens for a connection to
       // be made to this socket and accepts it.
       Socket client = serverSocket.accept();
-      System.out.println("S: Receiving...");
-
-      try
-      {
-
-        // sends the message to the client
-        mOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(client.getOutputStream())), true);
-
-        // read the message received from client
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-        // in this while we wait to receive messages from client (it's an
-        // infinite loop)
-        // this while it's like a listener for messages
-        while (running)
-        {
-          String message = in.readLine();
-
-          if (message != null && messageListener != null)
-          {
-            // call the method messageReceived from ServerBoard class
-            messageListener.messageReceived(message);
-          }
-        }
-
-      }
-      catch (Exception e)
-      {
-        System.out.println("S: Error");
-        e.printStackTrace();
-      }
-      finally
-      {
-        client.close();
-        System.out.println("S: Done.");
+      ServerHelper serv = new ServerHelper(client, running, mOut, messageListener);
+      serv.start();
       }
 
     }
@@ -124,6 +98,77 @@ public class RaspiServer extends Thread
   public interface OnMessageReceived
   {
     public void messageReceived(String message);
+  }
+
+}
+
+class ServerHelper extends Thread
+{
+
+  private Socket socket = null;
+  private boolean running = false;
+  private PrintWriter mOut;
+  private OnMessageReceived messageListener;
+
+ 
+
+  public ServerHelper(Socket socket, boolean running, PrintWriter mOut, OnMessageReceived messageListener)
+  {
+    super("Server Helper");    
+    this.socket = socket;
+    this.running = running;
+    this.mOut = mOut;
+    this.messageListener = messageListener;
+  }
+
+  public void run()
+  {
+    // Read input and process
+    System.out.println("S: Receiving...");
+
+    try
+    {
+
+      // sends the message to the client
+      mOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+
+      // read the message received from client
+      BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+      // in this while we wait to receive messages from client (it's an
+      // infinite loop)
+      // this while it's like a listener for messages
+      while (running)
+      {
+        String message = in.readLine();
+
+        if (message != null && messageListener != null)
+        {
+          // call the method messageReceived from ServerBoard class
+          messageListener.messageReceived(message);
+        }
+      }
+
+    }
+    catch (Exception e)
+    {
+      System.out.println("S: Error");
+      e.printStackTrace();
+    }
+    finally
+    {
+      try
+      {
+        socket.close();
+      }
+      catch (IOException e)
+      {
+        System.out.println("S: Error while closing socket");
+        e.printStackTrace();
+      }
+      System.out.println("S: Done.");
+    }
+
   }
 
 }
