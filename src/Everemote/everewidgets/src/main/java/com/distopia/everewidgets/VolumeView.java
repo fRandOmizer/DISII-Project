@@ -121,6 +121,11 @@ public class VolumeView extends View {
                 //changing global variables
                 initialX = event.getX();
                 initialY = event.getY();
+                
+                if(mListener != null) {
+                    mListener.onUpdate(CurrentValue);
+                }
+
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -157,9 +162,9 @@ public class VolumeView extends View {
                 initialY = 0.0f;
 
                 // TODO: Check if this makes sense here!
-                if(mListener != null) {
-                    mListener.onUpdate(CurrentValue);
-                }
+                //if(mListener != null) {
+                //    mListener.onUpdate(CurrentValue);
+                //}
 
                 break;
 
